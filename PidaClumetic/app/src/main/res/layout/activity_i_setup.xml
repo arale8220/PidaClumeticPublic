@@ -1,0 +1,341 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?android:attr/windowBackground"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme"
+        >
+
+    </android.support.v7.widget.Toolbar>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/bottomNavigationView"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:paddingTop="20dp">
+
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:paddingBottom="20dp">
+
+                <TextView
+                    android:id="@+id/account"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="계정 정보"
+                    android:textColor="#de000000"
+                    android:textSize="14sp"
+                    app:fontFamily="@font/notosans"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+                <Button
+                    android:id="@+id/account1"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_marginTop="6dp"
+                    android:background="@drawable/btn_setup"
+                    android:elevation="10dp"
+                    android:gravity="center_vertical"
+                    android:paddingStart="14dp"
+                    android:paddingLeft="14dp"
+                    android:text="내 정보"
+                    android:textColor="@color/drk_gray"
+                    android:textSize="16sp"
+                    app:fontFamily="@font/notosans"
+                    app:layout_constraintTop_toBottomOf="@+id/account" />
+
+                <ImageView
+                    android:id="@+id/imageView"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginRight="10dp"
+                    android:elevation="11dp"
+                    app:layout_constraintBottom_toBottomOf="@+id/account1"
+                    app:layout_constraintRight_toRightOf="@+id/account1"
+                    app:layout_constraintTop_toTopOf="@+id/account1"
+                    app:srcCompat="@drawable/ic_rightarrow"
+                    tools:ignore="VectorDrawableCompat"
+                    android:layout_marginEnd="10dp" />
+
+                <Button
+                    android:id="@+id/account2"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:background="@drawable/btn_setup"
+                    android:elevation="10dp"
+                    android:gravity="center_vertical"
+                    android:paddingStart="14dp"
+                    android:paddingLeft="14dp"
+                    android:text="결제 정보"
+                    android:textColor="@color/drk_gray"
+                    android:textSize="16sp"
+                    app:fontFamily="@font/notosans"
+                    app:layout_constraintTop_toBottomOf="@+id/account1" />
+
+                <ImageView
+                    android:id="@+id/imageView2"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginEnd="10dp"
+                    android:elevation="11dp"
+                    app:layout_constraintBottom_toBottomOf="@+id/account2"
+                    app:layout_constraintEnd_toEndOf="@+id/account2"
+                    app:layout_constraintTop_toTopOf="@+id/account2"
+                    app:srcCompat="@drawable/ic_rightarrow"
+                    tools:ignore="VectorDrawableCompat"
+                    android:layout_marginRight="10dp" />
+
+                <Button
+                    android:id="@+id/account3"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:background="@drawable/btn_setup"
+                    android:elevation="10dp"
+                    android:gravity="center_vertical"
+                    android:paddingStart="14dp"
+                    android:paddingLeft="14dp"
+                    android:text="배송 정보"
+                    android:textColor="@color/drk_gray"
+                    android:textSize="16sp"
+                    app:fontFamily="@font/notosans"
+                    app:layout_constraintTop_toBottomOf="@+id/account2" />
+
+                <ImageView
+                    android:id="@+id/imageView3"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginEnd="10dp"
+                    android:elevation="11dp"
+                    app:layout_constraintBottom_toBottomOf="@+id/account3"
+                    app:layout_constraintRight_toRightOf="@+id/account3"
+                    app:layout_constraintTop_toTopOf="@+id/account3"
+                    app:srcCompat="@drawable/ic_rightarrow"
+                    tools:ignore="VectorDrawableCompat"
+                    android:layout_marginRight="10dp" />
+
+
+            </android.support.constraint.ConstraintLayout>
+
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:paddingBottom="20dp">
+
+                <TextView
+                    android:id="@+id/center"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="고객센터"
+                    android:textColor="#de000000"
+                    android:textSize="14sp"
+                    app:fontFamily="@font/notosans"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+
+
+                <Button
+                    android:id="@+id/center1"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_marginTop="6dp"
+                    android:background="@drawable/btn_setup"
+                    android:elevation="10dp"
+                    android:gravity="center_vertical"
+                    android:paddingStart="14dp"
+                    android:paddingLeft="14dp"
+                    android:text="공지사항"
+                    android:textColor="@color/drk_gray"
+                    android:textSize="16sp"
+                    app:fontFamily="@font/notosans"
+                    app:layout_constraintTop_toBottomOf="@+id/center" />
+
+                <ImageView
+                    android:id="@+id/imageView4"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginRight="10dp"
+                    android:elevation="11dp"
+                    app:layout_constraintBottom_toBottomOf="@+id/center1"
+                    app:layout_constraintRight_toRightOf="@+id/center1"
+                    app:layout_constraintTop_toTopOf="@+id/center1"
+                    app:srcCompat="@drawable/ic_rightarrow"
+                    tools:ignore="VectorDrawableCompat"
+                    android:layout_marginEnd="10dp" />
+
+                <Button
+                    android:id="@+id/center2"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:background="@drawable/btn_setup"
+                    android:elevation="10dp"
+                    android:gravity="center_vertical"
+                    android:paddingStart="14dp"
+                    android:paddingLeft="14dp"
+                    android:text="FAQ"
+                    android:textColor="@color/drk_gray"
+                    android:textSize="16sp"
+                    app:fontFamily="@font/notosans"
+                    app:layout_constraintTop_toBottomOf="@+id/center1" />
+
+                <ImageView
+                    android:id="@+id/imageView5"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginEnd="10dp"
+                    android:elevation="11dp"
+                    app:layout_constraintBottom_toBottomOf="@+id/center2"
+                    app:layout_constraintEnd_toEndOf="@+id/center2"
+                    app:layout_constraintTop_toTopOf="@+id/center2"
+                    app:srcCompat="@drawable/ic_rightarrow"
+                    tools:ignore="VectorDrawableCompat"
+                    android:layout_marginRight="10dp" />
+
+                <Button
+                    android:id="@+id/center3"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:background="@drawable/btn_setup"
+                    android:elevation="10dp"
+                    android:gravity="center_vertical"
+                    android:paddingStart="14dp"
+                    android:paddingLeft="14dp"
+                    android:text="앱 정보"
+                    android:textColor="@color/drk_gray"
+                    android:textSize="16sp"
+                    app:fontFamily="@font/notosans"
+                    app:layout_constraintTop_toBottomOf="@+id/center2" />
+
+                <ImageView
+                    android:id="@+id/imageView6"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginEnd="10dp"
+                    android:elevation="11dp"
+                    app:layout_constraintBottom_toBottomOf="@+id/center3"
+                    app:layout_constraintRight_toRightOf="@+id/center3"
+                    app:layout_constraintTop_toTopOf="@+id/center3"
+                    app:srcCompat="@drawable/ic_rightarrow"
+                    tools:ignore="VectorDrawableCompat"
+                    android:layout_marginRight="10dp" />
+
+
+            </android.support.constraint.ConstraintLayout>
+
+
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:paddingBottom="20dp">
+
+                <TextView
+                    android:id="@+id/security"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="보안"
+                    android:textColor="#de000000"
+                    android:textSize="14sp"
+                    app:fontFamily="@font/notosans"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+
+                <Button
+                    android:id="@+id/security1"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_marginTop="6dp"
+                    android:background="@drawable/btn_setup"
+                    android:elevation="10dp"
+                    android:gravity="center_vertical"
+                    android:paddingStart="14dp"
+                    android:paddingLeft="14dp"
+                    android:text="로그아웃"
+                    android:textColor="@color/drk_gray"
+                    android:textSize="16sp"
+                    app:fontFamily="@font/notosans"
+                    app:layout_constraintTop_toBottomOf="@+id/security" />
+
+                <ImageView
+                    android:id="@+id/imageView7"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginRight="10dp"
+                    android:elevation="11dp"
+                    app:layout_constraintBottom_toBottomOf="@+id/security1"
+                    app:layout_constraintRight_toRightOf="@+id/security1"
+                    app:layout_constraintTop_toTopOf="@+id/security1"
+                    app:srcCompat="@drawable/ic_rightarrow"
+                    tools:ignore="VectorDrawableCompat"
+                    android:layout_marginEnd="10dp" />
+
+                <Button
+                    android:id="@+id/security2"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:background="@drawable/btn_setup"
+                    android:elevation="10dp"
+                    android:gravity="center_vertical"
+                    android:paddingStart="14dp"
+                    android:paddingLeft="14dp"
+                    android:text="회원탈퇴"
+                    android:textColor="@color/drk_gray"
+                    android:textSize="16sp"
+                    app:fontFamily="@font/notosans"
+                    app:layout_constraintTop_toBottomOf="@+id/security1" />
+
+                <ImageView
+                    android:id="@+id/imageView8"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginEnd="10dp"
+                    android:elevation="11dp"
+                    app:layout_constraintBottom_toBottomOf="@+id/security2"
+                    app:layout_constraintEnd_toEndOf="@+id/security2"
+                    app:layout_constraintTop_toTopOf="@+id/security2"
+                    app:srcCompat="@drawable/ic_rightarrow"
+                    tools:ignore="VectorDrawableCompat"
+                    android:layout_marginRight="10dp" />
+
+
+            </android.support.constraint.ConstraintLayout>
+
+        </LinearLayout>
+    </ScrollView>
+
+    <android.support.design.widget.BottomNavigationView
+        android:id="@+id/bottomNavigationView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent">
+
+        <include
+            android:id="@+id/navigation"
+            layout="@layout/bottomnav"
+            android:layout_width="match_parent"
+            android:layout_height="@android:dimen/notification_large_icon_height"
+            android:layout_alignParentBottom="true" />
+    </android.support.design.widget.BottomNavigationView>
+
+</android.support.constraint.ConstraintLayout>

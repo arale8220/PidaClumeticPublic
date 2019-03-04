@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?android:attr/windowBackground"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme"
+        >
+
+    </android.support.v7.widget.Toolbar>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingLeft="16dp"
+            android:paddingTop="20dp"
+            android:paddingRight="16dp">
+
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:paddingBottom="20dp">
+
+                <android.support.constraint.Guideline
+                    android:id="@+id/guideline"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintGuide_begin="100dp"
+                    android:orientation="vertical" />
+
+
+                <Button
+                    android:id="@+id/CardCompany"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_marginTop="6dp"
+                    android:background="@drawable/btn_setup"
+                    android:elevation="10dp"
+                    android:gravity="center_vertical"
+                    android:paddingStart="14dp"
+                    android:paddingLeft="14dp"
+                    android:text="카드사"
+                    android:textColor="@color/drk_gray"
+                    android:textSize="16sp"
+                    app:fontFamily="@font/notosans" />
+
+                <TextView
+                    android:id="@+id/cardcompany"
+                    android:layout_width="200dp"
+                    android:layout_height="wrap_content"
+                    android:elevation="10dp"
+                    android:textSize="16sp"
+                    android:text="TextView"
+                    android:textColor="@color/drk_gray"
+                    app:layout_constraintBottom_toTopOf="@+id/CardNumber"
+                    app:layout_constraintStart_toStartOf="@+id/guideline"
+                    app:layout_constraintTop_toTopOf="@+id/CardCompany" />
+
+                <Button
+                    android:id="@+id/CardNumber"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:background="@drawable/btn_setup"
+                    android:elevation="10dp"
+                    android:gravity="center_vertical"
+                    android:paddingStart="14dp"
+                    android:paddingLeft="14dp"
+                    android:text="카드번호"
+                    android:textColor="@color/drk_gray"
+                    android:textSize="16sp"
+                    app:fontFamily="@font/notosans"
+                    app:layout_constraintTop_toBottomOf="@+id/CardCompany" />
+
+                <TextView
+                    android:id="@+id/cardnumber"
+                    android:layout_width="200dp"
+                    android:layout_height="wrap_content"
+                    android:elevation="10dp"
+                    android:text="TextView"
+                    android:textColor="@color/drk_gray"
+                    android:textSize="16sp"
+                    app:layout_constraintBottom_toTopOf="@+id/CardDate"
+                    app:layout_constraintStart_toStartOf="@+id/guideline"
+                    app:layout_constraintTop_toTopOf="@+id/CardNumber" />
+
+                <Button
+                    android:id="@+id/CardDate"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:background="@drawable/btn_setup"
+                    android:elevation="10dp"
+                    android:gravity="center_vertical"
+                    android:paddingStart="14dp"
+                    android:paddingLeft="14dp"
+                    android:text="유효기간"
+                    android:textColor="@color/drk_gray"
+                    android:textSize="16sp"
+                    app:fontFamily="@font/notosans"
+                    app:layout_constraintTop_toBottomOf="@+id/CardNumber" />
+
+                <TextView
+                    android:id="@+id/carddate"
+                    android:layout_width="200dp"
+                    android:layout_height="wrap_content"
+                    android:elevation="10dp"
+                    android:text="TextView"
+                    android:textColor="@color/drk_gray"
+                    android:textSize="16sp"
+                    app:layout_constraintBottom_toTopOf="@+id/CardCVC"
+                    app:layout_constraintStart_toStartOf="@+id/guideline"
+                    app:layout_constraintTop_toTopOf="@+id/CardDate" />
+
+                <Button
+                    android:id="@+id/CardCVC"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:background="@drawable/btn_setup"
+                    android:elevation="10dp"
+                    android:gravity="center_vertical"
+                    android:paddingStart="14dp"
+                    android:paddingLeft="14dp"
+                    android:text="CVC"
+                    android:textColor="@color/drk_gray"
+                    android:textSize="16sp"
+                    app:fontFamily="@font/notosans"
+                    app:layout_constraintTop_toBottomOf="@+id/CardDate" />
+
+                <TextView
+                    android:id="@+id/cardcvc"
+                    android:layout_width="200dp"
+                    android:layout_height="wrap_content"
+                    android:elevation="10dp"
+                    android:text="TextView"
+                    android:textColor="@color/drk_gray"
+                    android:textSize="16sp"
+                    app:layout_constraintBottom_toBottomOf="@+id/CardCVC"
+                    app:layout_constraintStart_toStartOf="@+id/guideline"
+                    app:layout_constraintTop_toTopOf="@+id/CardCVC" />
+                <Button
+                    android:id="@+id/CardPW"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:background="@drawable/btn_setup"
+                    android:elevation="10dp"
+                    android:gravity="center_vertical"
+                    android:paddingStart="14dp"
+                    android:paddingLeft="14dp"
+                    android:text="비밀번호"
+                    android:textColor="@color/drk_gray"
+                    android:textSize="16sp"
+                    app:fontFamily="@font/notosans"
+                    app:layout_constraintTop_toBottomOf="@+id/CardCVC" />
+
+                <TextView
+                    android:id="@+id/cardpw"
+                    android:layout_width="200dp"
+                    android:layout_height="wrap_content"
+                    android:elevation="10dp"
+                    android:text="TextView"
+                    android:textColor="@color/drk_gray"
+                    android:textSize="16sp"
+                    app:layout_constraintBottom_toBottomOf="@+id/CardPW"
+                    app:layout_constraintStart_toStartOf="@+id/guideline"
+                    app:layout_constraintTop_toTopOf="@+id/CardPW" />
+
+
+            </android.support.constraint.ConstraintLayout>
+
+        </LinearLayout>
+    </ScrollView>
+
+</android.support.constraint.ConstraintLayout>

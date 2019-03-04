@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#ff5259</color>
+    <color name="colorPrimaryDark">#fd3b42</color>
+    <color name="colorAccent">#ff5259</color>
+
+    <color name="white">#ffffff</color>
+    <color name="lgt_gray">#9b9b9b</color>
+    <color name="drk_gray">#4b4b4b</color>
+    <color name="lgt_button">#f99b9e</color>
+    <color name="shadow">#11000000</color>
+    <color name="black">#000000</color>
+</resources>

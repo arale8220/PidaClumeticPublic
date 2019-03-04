@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="cluemetic.dev.arale.pidaclumetic">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.Design.Light.NoActionBar"
+        android:networkSecurityConfig="@xml/network_security_config">
+        <activity android:name=".ALoadingActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".BLoginActivity" android:launchMode="singleInstance" />
+        <activity android:name=".DTutorialActivity" android:launchMode="singleInstance" />
+        <activity android:name=".CSignupActivity" android:launchMode="singleInstance" />
+        <activity android:name=".ECategoryActivity" />
+        <activity android:name=".FSubCategoryActivity" />
+        <activity android:name=".HProductActivity" />
+        <activity android:name=".ISetupAccount1Activity" />
+        <activity android:name=".ISetupActivity" />
+        <activity android:name=".ISetupAccount2Activity" />
+        <activity android:name=".ISetupAccount3Activity" />
+        <activity android:name=".KAppVersionActivity" />
+    </application>
+
+</manifest>
