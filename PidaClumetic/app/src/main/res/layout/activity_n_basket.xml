@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clipToPadding="false"
+    android:clipChildren="false">
+
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:minHeight="?attr/actionBarSize"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/text_category"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="장바구니"
+            android:textColor="@color/drk_gray"
+            android:textSize="20sp"
+            app:fontFamily="@font/notosans" />
+
+        <ImageButton
+            android:id="@+id/btnCamera"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:background="#00000000"
+            android:paddingStart="0dp"
+            android:paddingEnd="20dp"
+            app:srcCompat="@android:drawable/ic_menu_camera" />
+
+        <ImageButton
+            android:id="@+id/btnSearch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:background="#00000000"
+            android:paddingStart="0dp"
+            android:paddingEnd="20dp"
+            app:srcCompat="@android:drawable/ic_menu_search" />
+
+
+    </android.support.v7.widget.Toolbar>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/lgt_gray"
+        app:layout_constraintTop_toBottomOf="@id/toolbar" />
+
+
+    <ScrollView
+        android:id="@+id/scrollView3"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/tester">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+        </LinearLayout>
+    </ScrollView>
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clipToPadding="false"
+        android:paddingBottom="20dp"
+        app:layout_constraintBottom_toTopOf="@+id/tester">
+
+
+        <Button
+            android:id="@+id/payment"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_margin="4dp"
+            android:layout_marginTop="12dp"
+            android:background="@color/white"
+            android:elevation="10dp"
+            android:gravity="center_vertical"
+            android:paddingStart="14dp"
+            android:paddingLeft="14dp"
+            android:text="결제정보"
+            android:textColor="@color/drk_gray"
+            android:textSize="16sp"
+            app:fontFamily="@font/notosans"
+            app:layout_constraintTop_toBottomOf="@+id/cream" />
+
+        <ImageView
+            android:id="@+id/imageView4"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginRight="10dp"
+            android:elevation="11dp"
+            android:tint="@color/drk_gray"
+            app:layout_constraintBottom_toBottomOf="@+id/payment"
+            app:layout_constraintRight_toRightOf="@+id/payment"
+            app:layout_constraintTop_toTopOf="@+id/payment"
+            app:srcCompat="@drawable/ic_rightarrow"
+            tools:ignore="VectorDrawableCompat" />
+
+        <Button
+            android:id="@+id/delivery"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_margin="4dp"
+            android:layout_marginTop="8dp"
+            android:background="@color/white"
+            android:elevation="10dp"
+            android:gravity="center_vertical"
+            android:paddingStart="14dp"
+            android:paddingLeft="14dp"
+            android:text="배송정보"
+            android:textColor="@color/drk_gray"
+            android:textSize="16sp"
+            app:fontFamily="@font/notosans"
+            app:layout_constraintTop_toBottomOf="@+id/payment" />
+
+        <ImageView
+            android:id="@+id/imageView5"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginRight="10dp"
+            android:elevation="11dp"
+            android:tint="@color/drk_gray"
+            app:layout_constraintBottom_toBottomOf="@+id/delivery"
+            app:layout_constraintRight_toRightOf="@+id/delivery"
+            app:layout_constraintTop_toTopOf="@+id/delivery"
+            app:srcCompat="@drawable/ic_rightarrow"
+            tools:ignore="VectorDrawableCompat" />
+
+
+    </android.support.constraint.ConstraintLayout>
+
+
+    <Button
+        android:id="@+id/tester"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:text="받아보기"
+        app:layout_constraintBottom_toTopOf="@id/bottomNavigationView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_weight="1"
+        android:background="@color/colorPrimary"
+        android:textColor="@color/white"
+        android:fontFamily="@font/notosans"
+        android:clipToPadding="false"
+        android:clipChildren="false"
+        android:elevation="16dp"/>
+
+
+    <android.support.design.widget.BottomNavigationView
+        android:id="@+id/bottomNavigationView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent">
+
+        <include
+            android:id="@+id/navigation"
+            layout="@layout/bottomnav"
+            android:layout_width="match_parent"
+            android:layout_height="@android:dimen/notification_large_icon_height"
+            android:layout_alignParentBottom="true" />
+    </android.support.design.widget.BottomNavigationView>
+
+</android.support.constraint.ConstraintLayout>

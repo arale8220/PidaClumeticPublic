@@ -23,7 +23,7 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public class ISetupActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
+public class ISetupActivity extends AppCompatActivity {
 
 
     private BottomNavigationView navigationView;
@@ -41,6 +41,36 @@ public class ISetupActivity extends AppCompatActivity implements BottomNavigatio
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_i_setup);
 
+
+
+        //네비게이션뷰 설정(클릭시 이동)
+        navigationView = findViewById(R.id.navigation);
+        navigationView.setOnNavigationItemSelectedListener(menuItem -> {
+            navigationView.postDelayed(() -> {
+                int itemId = menuItem.getItemId();
+                if (itemId == R.id.navigation_category) {
+                    startActivity(new Intent(getBaseContext(), ECategoryActivity.class));
+                } else if (itemId == R.id.navigation_basket) {
+                    startActivity(new Intent(this, NBasketActivity.class));
+                } else if (itemId == R.id.navigation_group) {
+                    startActivity(new Intent(getBaseContext(), JGroupActivity.class));
+                } else if (itemId == R.id.navigation_mypida) {
+                    startActivity(new Intent(this, OPidaActivity.class));
+                } else if (itemId == R.id.navigation_information) {
+                    startActivity(new Intent(getBaseContext(), ISetupActivity.class));
+                }
+                finish();
+            }, 0);
+            return true;
+        });
+
+        //현재는 카테고리이므로 카테고리에 체크 표시
+        Menu menu = navigationView.getMenu();
+        MenuItem menuItem = menu.getItem(4);
+        menuItem.setChecked(true);
+
+
+
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setTitle("설정");
@@ -51,11 +81,6 @@ public class ISetupActivity extends AppCompatActivity implements BottomNavigatio
         access_token = sharedPreferences.getString("access_token","     ");
         new getUserData().execute();
 
-        navigationView = (BottomNavigationView) findViewById(R.id.navigation);
-        navigationView.setOnNavigationItemSelectedListener(this);
-        Menu menu = navigationView.getMenu();
-        MenuItem menuItem = menu.getItem(4);
-        menuItem.setChecked(true);
 
         Button.OnClickListener onClickListener = view -> {
             switch (view.getId()) {
@@ -127,10 +152,22 @@ public class ISetupActivity extends AppCompatActivity implements BottomNavigatio
                 startActivity(intent);
                 break;
             case 7:
+                //remove tokens
+                SharedPreferences remove7 = getSharedPreferences("user", MODE_PRIVATE);
+                SharedPreferences.Editor editor7 = remove7.edit();
+                editor7.putString("access_token","");
+                editor7.putString("refresh_token","");
+                editor7.apply();
                 intent = new Intent(getBaseContext(), BLoginActivity.class);
                 startActivity(intent);
                 break;
             case 8:
+                //remove tokens
+                SharedPreferences remove8 = getSharedPreferences("user", MODE_PRIVATE);
+                SharedPreferences.Editor editor8 = remove8.edit();
+                editor8.putString("access_token","");
+                editor8.putString("refresh_token","");
+                editor8.apply();
                 intent = new Intent(getBaseContext(), BLoginActivity.class);
                 startActivity(intent);
                 break;
@@ -216,23 +253,4 @@ public class ISetupActivity extends AppCompatActivity implements BottomNavigatio
     }
 
 
-    @Override
-    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        navigationView.postDelayed(() -> {
-            int itemId = item.getItemId();
-            if (itemId == R.id.navigation_category) {
-                startActivity(new Intent(this, ECategoryActivity.class));
-//            } else if (itemId == R.id.navigation_basket) {
-//                startActivity(new Intent(this, JBasketActivity.class));
-//            } else if (itemId == R.id.navigation_group) {
-//                startActivity(new Intent(this, KTogetherActivity.class));
-//            } else if (itemId == R.id.navigation_mypida) {
-//                startActivity(new Intent(this, LShippingActivity.class));
-            } else if (itemId == R.id.navigation_information) {
-                startActivity(new Intent(this, ISetupActivity.class));
-            }
-            finish();
-        }, 0);
-        return true;
-    }
 }

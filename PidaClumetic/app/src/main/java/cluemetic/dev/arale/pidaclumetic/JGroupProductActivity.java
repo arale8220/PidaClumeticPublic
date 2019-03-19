@@ -8,6 +8,7 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -15,11 +16,11 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.NumberPicker;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -30,6 +31,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
@@ -37,28 +39,23 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 
-public class HProductActivity extends AppCompatActivity {
-    Intent intent;
-    Integer count;
-    String[] ingredients, reviews;
-    String json_url="http://ec2-13-125-246-38.ap-northeast-2.compute.amazonaws.com/products/";
-    String info_url="";
-    TextView mcompany, mtitle, mprice, mseller, mmanufac, mcountry, minfourl;
+public class JGroupProductActivity extends AppCompatActivity {
+
+    TextView mcompany, mtitle, mprice, mseller, mmanufac, mcountry, minfourl, mpriceNow;
     ImageView mimg;
     Bitmap bm = null;
-    String id, com, tit, pri, sell, manu, coun, inf, img, subCount;
+    String id, com, tit, pri, sell, manu, coun, inf, img, group_url;
     ListView mreview, mingredient;
     HProductIngredientsAdapter ingredientAdapter;
     HProductReviewAdapter reviewAdapter;
-
+    String json_url="http://ec2-13-125-246-38.ap-northeast-2.compute.amazonaws.com/products/";
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_h_product);
+        setContentView(R.layout.activity_j_group_product);
 
-
-        intent = getIntent();
+        Intent intent = getIntent();
         id = intent.getStringExtra("id");
 
         //get bitmap image from img and set mimg
@@ -74,46 +71,26 @@ public class HProductActivity extends AppCompatActivity {
         manu = intent.getStringExtra("info_manufacturer");
         coun = intent.getStringExtra("info_country");
         inf = intent.getStringExtra("info_url");
-        subCount = intent.getStringExtra("subCount");
-
+        group_url = intent.getStringExtra("group_url");
         mtitle = findViewById(R.id.title);
         mcompany = findViewById(R.id.company);
-        mprice = findViewById(R.id.price);
+        mprice = findViewById(R.id.priceT);
+        mpriceNow = findViewById(R.id.priceN);
         mseller = findViewById(R.id.inform1);
         mmanufac = findViewById(R.id.inform2);
         mcountry = findViewById(R.id.inform3);
         minfourl = findViewById(R.id.inform4);
+
         mtitle.setText(tit);
         mcompany.setText(com);
         mprice.setText(pri);
         mseller.setText(sell);
         mmanufac.setText(manu);
         mcountry.setText(coun);
+        //mpriceNow.setText("");
         minfourl.setOnClickListener(v -> {
             Intent browse = new Intent( Intent.ACTION_VIEW , Uri.parse(inf) );
             startActivity( browse );
-        });
-
-        Button tester = findViewById(R.id.tester);
-        tester.setOnClickListener(new Button.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                SharedPreferences pref = getSharedPreferences("tester", MODE_PRIVATE);
-                Integer tester_count = Integer.valueOf(pref.getString("count", "0"));
-
-                if (!(subCount.equals("1"))) {
-                    if (tester_count>2) show(1);
-                    else show(0);
-                }else show(2);
-
-            }
-        });
-        Button order = findViewById(R.id.order);
-        order.setOnClickListener(new Button.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                show(3);
-            }
         });
 
         //scrolls
@@ -121,9 +98,15 @@ public class HProductActivity extends AppCompatActivity {
         mreview = findViewById(R.id.review);
         new IngredientConnection().execute();
 
+        Button order = findViewById(R.id.group_order);
+        order.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                show();
+            }
+        });
+
     }
-
-
 
 
 
@@ -213,6 +196,7 @@ public class HProductActivity extends AppCompatActivity {
                             arr.add(new HIngredient(ContextCompat.getDrawable(getBaseContext(), R.drawable.ingredients_icons_grade_9), currName));
                             break;
                     }
+                    Log.i("###", arr.toString());
 
                 }
                 ingredientAdapter = new HProductIngredientsAdapter(getBaseContext(), arr);
@@ -323,101 +307,6 @@ public class HProductActivity extends AppCompatActivity {
         }
     }
 
-
-    //각 모드에 따라 변경 창 띄우기
-    void show(Integer mode)
-    {
-        switch (mode) {
-
-            case 0:
-                AlertDialog.Builder builder0 = new AlertDialog.Builder(this);
-                builder0.setTitle("테스터");
-                builder0.setMessage("해당 제품이 테스터에 추가됩니다.");
-                builder0.setPositiveButton("확인",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                SharedPreferences pref = getSharedPreferences("tester", MODE_PRIVATE);
-                                Integer tester_count = Integer.valueOf(pref.getString("count", "0"));
-                                String testers = pref.getString("testers", "");
-                                SharedPreferences.Editor editor = pref.edit();
-                                editor.putString("count", String.valueOf(tester_count + 1));
-                                editor.putString("testers", testers + id + " ");
-                                editor.apply();
-                            }
-                        });
-                builder0.show();
-                break;
-
-
-            case 1:
-                AlertDialog.Builder builder1 = new AlertDialog.Builder(this);
-                builder1.setTitle("테스터");
-                builder1.setMessage("이미 세개의 테스터를 모두 고르셔서, 추가되지 않았습니다.");
-                builder1.setPositiveButton("확인",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                            }
-                        });
-                builder1.show();
-                break;
-
-
-            case 2:
-                AlertDialog.Builder builder2 = new AlertDialog.Builder(this);
-                builder2.setTitle("테스터");
-                builder2.setMessage("테스터 신청은 '크림' 카테고리에서만 가능합니다.");
-                builder2.setPositiveButton("확인",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                            }
-                        });
-                builder2.show();
-                break;
-
-
-            case 3:
-                AlertDialog.Builder builder3 = new AlertDialog.Builder(this);
-                builder3.setTitle("장바구니");
-                builder3.setMessage("장바구니에 추가할 상품의 개수를 고르고, 확인을 눌러주세요");
-                final NumberPicker np = new NumberPicker(HProductActivity.this);
-
-                np.setMaxValue(100); // max value 100
-                np.setMinValue(1);   // min value 0
-                np.setWrapSelectorWheel(false);
-                np.setOnValueChangedListener((NumberPicker.OnValueChangeListener) this);
-
-                builder3.setPositiveButton("확인",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                try {
-                                    SharedPreferences pref = getSharedPreferences("order", MODE_PRIVATE);
-                                    JSONObject jinit = new JSONObject();
-                                    for (int i = 0; i < 22; i++)
-                                        jinit.put(String.valueOf(i + 1), 0);
-                                    JSONObject j = new JSONObject(pref.getString("products", jinit.toString()));
-
-                                    j.put(id, j.getInt(id) + np.getValue());
-                                    SharedPreferences.Editor editor = pref.edit();
-                                    editor.putString("products", j.toString());
-                                    editor.apply();
-
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        });
-                builder3.setNegativeButton("취소", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                    }
-                });
-                builder3.show();
-                break;
-
-        }
-    }
-
-
     public void setListViewHeightBasedOnChildren(ListView listView) {
         int totalHeight = 0;
         int desiredWidth = View.MeasureSpec.makeMeasureSpec(listView.getWidth(), View.MeasureSpec.AT_MOST);
@@ -450,4 +339,84 @@ public class HProductActivity extends AppCompatActivity {
     }
 
 
+
+    void show()
+    {
+        AlertDialog.Builder builder3 = new AlertDialog.Builder(this);
+        builder3.setTitle("공동구매");
+        builder3.setMessage("구매할 상품의 개수를 선택해주세요. \n\n 공동구매의 경우 상품은 원가로 결제되며, 공동구매가 마감된 이후 할인액만큼 환불이 이루어집니다.");
+        final NumberPicker np = new NumberPicker(JGroupProductActivity.this);
+
+        np.setMaxValue(20); // max value 100
+        np.setMinValue(1);   // min value 0
+        np.setWrapSelectorWheel(false);
+        np.setOnValueChangedListener((NumberPicker.OnValueChangeListener) this);
+
+        builder3.setPositiveButton("확인",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        new Purchase(group_url, np.getValue()).execute();
+                    }
+                });
+        builder3.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+            }
+        });
+        builder3.show();
+    }
+
+    private class Purchase extends AsyncTask<String, Void, Boolean> {
+        String group_url_str;
+        Integer num;
+
+        public Purchase(String group_url_str, Integer num) {
+            this.group_url_str = group_url_str;
+            this.num = num;
+        }
+
+        @Override
+        protected void onPreExecute() { }
+
+
+        @Override
+        protected Boolean doInBackground(String... params) {
+            try{
+                SharedPreferences dd = getSharedPreferences("user", MODE_PRIVATE);
+                String token = dd.getString("access_token", "");
+                URL url = new URL("http://ec2-13-125-246-38.ap-northeast-2.compute.amazonaws.com/group-purchase-orders/?access_token="+token);
+                HttpURLConnection con = (HttpURLConnection) url.openConnection();
+                con.setRequestMethod("POST");
+                con.setRequestProperty("Content-Type", "application/json");
+                con.setDoOutput(true);
+                con.setDoInput(true);
+                con.connect();
+
+                SharedPreferences tut = getSharedPreferences("user", MODE_PRIVATE);
+                JSONObject post = new JSONObject();
+                post.put("event", group_url_str);
+                post.put("quantity", num);
+                post.put("delivery_information", tut.getString("delivery", ""));
+                post.put("payment_information", tut.getString("payment", ""));
+
+                OutputStreamWriter os= new OutputStreamWriter(con.getOutputStream());
+                os.write( post.toString() );
+                os.flush();
+
+
+                if (con.getResponseCode() == HttpURLConnection.HTTP_OK) return true;
+
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return false;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean aBoolean) {
+            if (aBoolean) Toast.makeText(JGroupProductActivity.this, "주문에 성공하였습니다. My피다에서 확인해주세요", Toast.LENGTH_SHORT).show();
+            else Toast.makeText(JGroupProductActivity.this, "주문에 실패하였습니다. 배송/결제정보를 입력해주세요", Toast.LENGTH_SHORT).show();
+        }
+    }
 }

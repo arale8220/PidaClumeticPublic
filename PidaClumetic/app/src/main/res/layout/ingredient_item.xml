@@ -6,7 +6,9 @@
     <ImageView
         android:layout_width="14dp"
         android:layout_height="14dp"
-        android:id="@+id/ewgGrade"/>
+        android:id="@+id/ewgGrade"
+        android:layout_marginTop="12dp"
+        android:layout_marginLeft="10dp"/>
 
     <TextView
         android:layout_width="wrap_content"
@@ -14,6 +16,8 @@
         android:text="New Text"
         android:id="@+id/ingredientName"
         android:textSize="14sp"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="10dp"
         android:textColor="@color/drk_gray" />
 
 </LinearLayout>

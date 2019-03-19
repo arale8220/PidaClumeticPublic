@@ -2,24 +2,23 @@ package cluemetic.dev.arale.pidaclumetic;
 
 import android.Manifest;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
-import android.media.Image;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.design.widget.BottomNavigationView;
 import android.support.v4.content.FileProvider;
-import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.api.client.extensions.android.http.AndroidHttp;
@@ -37,59 +36,66 @@ import com.google.api.services.vision.v1.model.EntityAnnotation;
 import com.google.api.services.vision.v1.model.Feature;
 import com.google.api.services.vision.v1.model.ImageContext;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.lang.ref.WeakReference;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FSubCategoryActivity extends AppCompatActivity {
-    //for horizontal picker
-    ViewPager viewPager;
-    FSubCategoryAdapter adapter;
-    List<Product> products;
-    Intent intent;
-    String[] productsUrls;
-    Integer subCount;
-    ImageButton picker;
+public class NBasketActivity extends AppCompatActivity {
 
-
+    Button payment, delivery, purchase;
+    private BottomNavigationView navigationView;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_f_subcategory);
+        setContentView(R.layout.activity_n_basket);
 
-        //카테고리에서 넘겨준 url들을 리스트화하여 보여줌
-        intent = getIntent();
-        productsUrls = intent.getStringArrayExtra("products");
-        subCount = intent.getIntExtra("count", 1);
-        new ListConnection().execute(productsUrls);
+        //네비게이션뷰 설정(클릭시 이동)
+        navigationView = findViewById(R.id.navigation);
+        navigationView.setOnNavigationItemSelectedListener(menuItem -> {
+            navigationView.postDelayed(() -> {
+                int itemId = menuItem.getItemId();
+                if (itemId == R.id.navigation_category) {
+                    startActivity(new Intent(getBaseContext(), ECategoryActivity.class));
+                } else if (itemId == R.id.navigation_basket) {
+                    startActivity(new Intent(this, NBasketActivity.class));
+                } else if (itemId == R.id.navigation_group) {
+                    startActivity(new Intent(getBaseContext(), JGroupActivity.class));
+                } else if (itemId == R.id.navigation_mypida) {
+                    startActivity(new Intent(this, OPidaActivity.class));
+                } else if (itemId == R.id.navigation_information) {
+                    startActivity(new Intent(getBaseContext(), ISetupActivity.class));
+                }
+                finish();
+            }, 0);
+            return true;
+        });
 
-        //서브카테고리의 이름 설정
-        String intentTitle=intent.getStringExtra("title");
-        TextView textView = findViewById(R.id.text_category);
-        textView.setText(intentTitle);
+        //현재는 카테고리이므로 카테고리에 체크 표시
+        Menu menu = navigationView.getMenu();
+        MenuItem menuItem = menu.getItem(1);
+        menuItem.setChecked(true);
 
-        picker=(ImageButton) findViewById(R.id.button);
-        showBtn();
-        picker.setOnClickListener(new View.OnClickListener() {
+
+
+        payment = findViewById(R.id.payment);
+        payment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent tester = new Intent(FSubCategoryActivity.this, MTesterActivity.class);
-                startActivity(tester);
+                Intent intent = new Intent(NBasketActivity.this, ISetupAccount2Activity.class);
+                startActivity(intent);
+            }
+        });
+
+        delivery = findViewById(R.id.delivery);
+        delivery.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(NBasketActivity.this, ISetupAccount3Activity.class);
+                startActivity(intent);
             }
         });
 
@@ -108,124 +114,10 @@ public class FSubCategoryActivity extends AppCompatActivity {
             }
         });
 
+
+
     }
 
-
-    //각 url마다 정보를 받아 product 생성
-   private class ListConnection extends AsyncTask<String[], Void, Boolean> {
-        @Override
-        protected void onPreExecute() { }
-
-        @Override
-        protected Boolean doInBackground(String[]... params) {
-            try {
-
-                String[] urls = params[0];
-                products = new ArrayList<>();
-                for (int i = 0; i<urls.length; i++){
-
-                    Log.i("###",urls[i]);
-                    URL url = new URL(urls[i]);
-                    HttpURLConnection con = (HttpURLConnection) url.openConnection();
-                    con.setRequestMethod("GET");
-                    con.setRequestProperty("Cache-Control", "no-cache");
-                    con.setRequestProperty("Content-Type", "application/json");
-                    con.setRequestProperty("Accept", "application/json");
-                    con.setDoInput(true);
-                    con.connect();
-
-                    if (con.getResponseCode() == HttpURLConnection.HTTP_OK) {
-                        StringBuilder result = new StringBuilder();
-                        InputStream in = new BufferedInputStream(con.getInputStream());
-                        BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-                        String line;
-                        while ((line = reader.readLine()) != null) {
-                            result.append(line);
-                        }
-
-                        JSONObject response = new JSONObject(result.toString());
-
-
-                        String price = "";
-                        if (subCount == 1){
-                            price = String.valueOf(response.getInt("capacity")) + "ml   ￦"+String.valueOf(response.getInt("price"));
-                        }else if (subCount == 5){
-                            price = String.valueOf(response.getInt("capacity")) + "매   ￦"+String.valueOf(response.getInt("price"));
-                        }
-
-                        Log.i("###", response.getString("info_url"));
-
-                        Product item = new Product(
-                                response.getString("name"),
-                                price,
-                                response.getJSONObject("brand").getString("name"),
-                                String.valueOf(response.getInt("id")),
-                                response.getString("info_url"),
-                                response.getString("image"),
-                                response.getString("info_seller"),
-                                response.getString("info_manufacturer"),
-                                response.getString("info_country"),
-                                String.valueOf(subCount));
-
-                        products.add(item);
-
-
-                    }
-                    con.disconnect();
-
-                }
-
-
-            } catch (ProtocolException e) {
-                e.printStackTrace();
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            return  null;
-        }
-
-        @Override
-        protected void onPostExecute(Boolean result) {
-            showList();
-        }
-    }
-
-    //products를 받아 화면에 리스트 띄워주기.
-    //현재 사진을 로드하는 데에 시간이 조금 걸림.
-    void showList(){
-        adapter = new FSubCategoryAdapter(products, this);
-        viewPager = findViewById(R.id.viewPager);
-        viewPager.setAdapter(adapter);
-    }
-
-    void showBtn(){
-        SharedPreferences tut = getSharedPreferences("tester", MODE_PRIVATE);
-        Integer mode = Integer.valueOf(tut.getString("count", "0"));
-        switch (mode){
-            case 1:
-                picker.setImageResource(R.drawable.selection_1_selected);
-                break;
-            case 2:
-                picker.setImageResource(R.drawable.selection_2_selected);
-                break;
-            case 3:
-                picker.setImageResource(R.drawable.selection_3_selected);
-                break;
-            default:
-                picker.setImageResource(R.drawable.selection_0_selected);
-
-        }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        showBtn();
-    }
 
 
 
@@ -245,7 +137,7 @@ public class FSubCategoryActivity extends AppCompatActivity {
     private static final String ANDROID_PACKAGE_HEADER = "X-Android-Package";
     private static final int MAX_LABEL_RESULTS = 10;
     private static final int MAX_DIMENSION = 1200;
-    private static final String TAG = FSubCategoryActivity.class.getSimpleName();
+    private static final String TAG = NBasketActivity.class.getSimpleName();
     private static final int GALLERY_PERMISSIONS_REQUEST = 0;
     private static final int GALLERY_IMAGE_REQUEST = 1;
     public static final int CAMERA_PERMISSIONS_REQUEST = 2;
@@ -402,10 +294,10 @@ public class FSubCategoryActivity extends AppCompatActivity {
     }
 
     private class LableDetectionTask extends AsyncTask<Object, Void, String> {
-        private final WeakReference<FSubCategoryActivity> mActivityWeakReference;
+        private final WeakReference<NBasketActivity> mActivityWeakReference;
         private Vision.Images.Annotate mRequest;
 
-        LableDetectionTask(FSubCategoryActivity activity, Vision.Images.Annotate annotate) {
+        LableDetectionTask(NBasketActivity activity, Vision.Images.Annotate annotate) {
             mActivityWeakReference = new WeakReference<>(activity);
             mRequest = annotate;
         }
@@ -427,7 +319,7 @@ public class FSubCategoryActivity extends AppCompatActivity {
         }
 
         protected void onPostExecute(String result) {
-            FSubCategoryActivity activity = mActivityWeakReference.get();
+            NBasketActivity activity = mActivityWeakReference.get();
             if (activity != null && !activity.isFinishing()) {
                 if(result.equals("사진에서 문자가 발견되지 않았습니다. 다시 시도해주세요")) {
                     Toast.makeText(activity, result, Toast.LENGTH_SHORT).show();

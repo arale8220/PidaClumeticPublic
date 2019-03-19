@@ -5,7 +5,7 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.CAMERA"/>
 
     <application
         android:allowBackup="true"
@@ -21,17 +21,34 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="${applicationId}.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_paths"/>
+        </provider>
+
         <activity android:name=".BLoginActivity" android:launchMode="singleInstance" />
         <activity android:name=".DTutorialActivity" android:launchMode="singleInstance" />
         <activity android:name=".CSignupActivity" android:launchMode="singleInstance" />
-        <activity android:name=".ECategoryActivity" />
+        <activity android:name=".ECategoryActivity" android:launchMode="singleInstance" />
         <activity android:name=".FSubCategoryActivity" />
         <activity android:name=".HProductActivity" />
         <activity android:name=".ISetupAccount1Activity" />
-        <activity android:name=".ISetupActivity" />
+        <activity android:name=".ISetupActivity" android:launchMode="singleInstance" />
         <activity android:name=".ISetupAccount2Activity" />
         <activity android:name=".ISetupAccount3Activity" />
         <activity android:name=".KAppVersionActivity" />
+        <activity android:name=".LListActivity" />
+        <activity android:name=".JGroupActivity" />
+        <activity android:name=".JGroupProductActivity" />
+        <activity android:name=".MTesterActivity" android:launchMode="singleInstance" />
+        <activity android:name=".NBasketActivity" android:launchMode="singleInstance" />
+        <activity android:name=".OPidaActivity" android:launchMode="singleInstance"  />
     </application>
 
 </manifest>

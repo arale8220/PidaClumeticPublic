@@ -218,7 +218,7 @@ public class ISetupAccount3Activity extends AppCompatActivity {
     }
 
 
-    //서버에 변경된 데이터 send
+
     private class Connection extends AsyncTask<String, Void, Boolean> {
         @Override
         protected void onPreExecute() { }
@@ -230,18 +230,13 @@ public class ISetupAccount3Activity extends AppCompatActivity {
 
                 String strParams = "access_token=" + access_token;
 
-                URL url = new URL(json_url);
+                URL url = new URL(json_url + "?" + strParams);
                 HttpURLConnection con = (HttpURLConnection) url.openConnection();
                 con.setRequestMethod("GET");
                 con.setRequestProperty("Content-Type", "application/json");
                 con.setDoInput(true);
                 con.setDoOutput(true);
                 con.connect();
-
-                OutputStream outputStream = con.getOutputStream();
-                outputStream.write(strParams.getBytes());
-                outputStream.flush();
-                outputStream.close();
 
                 InputStream stream = con.getInputStream();
                 BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
@@ -273,6 +268,8 @@ public class ISetupAccount3Activity extends AppCompatActivity {
             update();
         }
     }
+
+
     //서버에 변경된 데이터 send
     private class Patch extends AsyncTask<String, Void, Boolean> {
         @Override
@@ -292,14 +289,28 @@ public class ISetupAccount3Activity extends AppCompatActivity {
                 con.setDoInput(true);
                 con.connect();
 
+                JSONObject patch = new JSONObject();
+                patch.put(params[0], params[1]);
+
                 OutputStream outStream = con.getOutputStream();
                 BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outStream));
-                writer.write(("{\"" + params[0] + "\":\"" + params[1] + "\", \"access_token\":\"" + access_token + "}"));
+                writer.write(patch.toString());
                 writer.flush();
                 writer.close();
 
+                InputStream stream = con.getInputStream();
+                BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
+                StringBuffer buffer = new StringBuffer();
+                String line = "";
+                while ((line = reader.readLine()) != null) {
+                    buffer.append(line);
+                }
 
-                return true;
+                con.disconnect();
+                reader.close();
+                JSONObject Jres = new JSONObject(buffer.toString());
+
+                return Jres.getBoolean("valid");
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -309,6 +320,16 @@ public class ISetupAccount3Activity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(Boolean result) {
+            if (result) {
+                Toast.makeText(ISetupAccount3Activity.this, "필요한 정보를 모두 입력해야 주문이 가능합니다", Toast.LENGTH_SHORT).show();
+            }else{
+                Toast.makeText(ISetupAccount3Activity.this, "변경사항이 모두 저장되었습니다", Toast.LENGTH_SHORT).show();
+                SharedPreferences tut = getSharedPreferences("user", MODE_PRIVATE);
+                SharedPreferences.Editor editor = tut.edit();
+                editor.putBoolean("deliveryOk", true);
+                editor.apply();
+            }
+
             update();
         }
     }

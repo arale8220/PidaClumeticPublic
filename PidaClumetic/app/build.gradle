@@ -4,7 +4,7 @@ android {
     compileSdkVersion 28
     defaultConfig {
         applicationId "cluemetic.dev.arale.pidaclumetic"
-        minSdkVersion 19
+        minSdkVersion 24
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
@@ -31,6 +31,10 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     //for bottomNavigationView
     implementation 'com.android.support:design:28.0.0'
-    //for carouselPicker
+    //for carouselPicker, cardView in groupActivity
     implementation 'com.android.support:cardview-v7:28.0.0'
+    //for ocr
+    implementation 'com.google.api-client:google-api-client-android:1.23.0' exclude module: 'httpclient'
+    implementation 'com.google.http-client:google-http-client-gson:1.23.0' exclude module: 'httpclient'
+    implementation 'com.google.apis:google-api-services-vision:v1-rev369-1.23.0'
 }

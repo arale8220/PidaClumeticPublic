@@ -213,7 +213,6 @@ public class ISetupAccount2Activity extends AppCompatActivity {
                 break;
 
 
-            //change skintype
             case 4:
                 AlertDialog.Builder builder4 = new AlertDialog.Builder(this);
                 builder4.setTitle("비밀번호");
@@ -246,7 +245,7 @@ public class ISetupAccount2Activity extends AppCompatActivity {
     }
 
 
-    //서버에 변경된 데이터 send
+    //서버 데이터 받
     private class Connection extends AsyncTask<String, Void, Boolean> {
         @Override
         protected void onPreExecute() { }
@@ -258,18 +257,13 @@ public class ISetupAccount2Activity extends AppCompatActivity {
 
                 String strParams = "access_token=" + access_token;
 
-                URL url = new URL(json_url);
+                URL url = new URL(json_url+"?"+strParams);
                 HttpURLConnection con = (HttpURLConnection) url.openConnection();
                 con.setRequestMethod("GET");
                 con.setRequestProperty("Content-Type", "application/json");
                 con.setDoInput(true);
                 con.setDoOutput(true);
                 con.connect();
-
-                OutputStream outputStream = con.getOutputStream();
-                outputStream.write(strParams.getBytes());
-                outputStream.flush();
-                outputStream.close();
 
                 InputStream stream = con.getInputStream();
                 BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
@@ -301,6 +295,9 @@ public class ISetupAccount2Activity extends AppCompatActivity {
             update();
         }
     }
+
+
+
     //서버에 변경된 데이터 send
     private class Patch extends AsyncTask<String, Void, Boolean> {
         @Override
@@ -320,9 +317,12 @@ public class ISetupAccount2Activity extends AppCompatActivity {
                 con.setDoInput(true);
                 con.connect();
 
+                JSONObject patch = new JSONObject();
+                patch.put(params[0], params[1]);
+
                 OutputStream outStream = con.getOutputStream();
                 BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outStream));
-                writer.write(("{\"" + params[0] + "\":\"" + params[1] + "\", \"access_token\":\"" + access_token + "}"));
+                writer.write(patch.toString());
                 writer.flush();
                 writer.close();
 
@@ -337,13 +337,8 @@ public class ISetupAccount2Activity extends AppCompatActivity {
                 con.disconnect();
                 reader.close();
                 JSONObject Jres = new JSONObject(buffer.toString());
-                com = Jres.getString("issuer");
-                cvc = Jres.getString("cvc");
-                date = Jres.getString("expiration_date");
-                num = Jres.getString("card_number");
-                pw = Jres.getString("password_hashed");
 
-                return Jres.getBoolean("result");
+                return Jres.getBoolean("valid");
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -353,6 +348,17 @@ public class ISetupAccount2Activity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(Boolean result) {
+            if (result) {
+                Toast.makeText(ISetupAccount2Activity.this, "필요한 정보를 모두 입력해야 주문이 가능합니다", Toast.LENGTH_SHORT).show();
+            }else{
+                Toast.makeText(ISetupAccount2Activity.this, "변경사항이 모두 저장되었습니다", Toast.LENGTH_SHORT).show();
+                SharedPreferences tut = getSharedPreferences("user", MODE_PRIVATE);
+                SharedPreferences.Editor editor = tut.edit();
+                editor.putBoolean("paymentOk", true);
+                editor.apply();
+
+            }
+
             update();
         }
     }

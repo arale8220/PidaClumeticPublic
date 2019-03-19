@@ -107,19 +107,15 @@ public class BLoginActivity extends AppCompatActivity {
                         "&client_id=" + client_id +
                         "&client_secret=" + client_secret;
 
+                Log.i("###", "login1");
 
-                URL url = new URL(getTokenUrl);
+                URL url = new URL(getTokenUrl+"?"+strParams);
                 HttpURLConnection urlConn = (HttpURLConnection) url.openConnection();
                 urlConn.setRequestMethod("POST"); // URL 요청에 대한 메소드 설정 : POST.
                 urlConn.setRequestProperty("Content-Type", "application/json");
                 urlConn.setDoInput(true);
-                urlConn.setDoOutput (true);
 
-                OutputStream outputStream = urlConn.getOutputStream();
-                outputStream.write(strParams.getBytes( "UTF-8" ));
-                outputStream.flush();
-                outputStream.close();
-
+                Log.i("###", "login2");
 
                 if (urlConn.getResponseCode() == HttpURLConnection.HTTP_OK) {
 
@@ -133,6 +129,8 @@ public class BLoginActivity extends AppCompatActivity {
                     reader.close();
                     JSONObject JsonResult = new JSONObject(buffer.toString());
                     urlConn.disconnect();
+
+                    Log.i("###", "login3");
 
                     return JsonResult;
                 }
@@ -155,7 +153,11 @@ public class BLoginActivity extends AppCompatActivity {
                     access_token = result.getString("access_token");
                     refresh_token = result.getString("refresh_token");
 
+                    Log.i("###", "login4");
+
                 } catch (JSONException e) {
+
+                    Log.i("###", "login5");
                     e.printStackTrace();
                     showRetryDialog();
                 }
@@ -168,6 +170,8 @@ public class BLoginActivity extends AppCompatActivity {
                 editor.putString("username", username);
                 editor.putString("password", password);
                 editor.apply();
+
+                Log.i("###", "login6");
 
                 //show login is successful
                 Toast.makeText(getBaseContext(), "로그인 되었습니다.", Toast.LENGTH_SHORT).show();

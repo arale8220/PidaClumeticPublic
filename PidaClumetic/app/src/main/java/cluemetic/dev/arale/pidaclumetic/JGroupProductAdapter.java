@@ -11,25 +11,22 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import java.io.BufferedInputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.List;
 
-public class FSubCategoryAdapter extends PagerAdapter {
+public class JGroupProductAdapter extends PagerAdapter {
 
-    private List<Product> products;
+    private List<JGroupProduct> products;
     private LayoutInflater layoutInflater;
     private Context context;
     //Bitmap bm = null;
 
-    public FSubCategoryAdapter(List<Product> products, Context context) {
+    public JGroupProductAdapter(List<JGroupProduct> products, Context context) {
         this.products = products;
         this.context = context;
     }
@@ -48,26 +45,35 @@ public class FSubCategoryAdapter extends PagerAdapter {
     @Override
     public Object instantiateItem(@NonNull ViewGroup container, final int position) {
         layoutInflater = LayoutInflater.from(context);
-        View view = layoutInflater.inflate(R.layout.subcategory_item, container, false);
+        View view = layoutInflater.inflate(R.layout.group_item, container, false);
 
         ImageView imageView;
-        TextView company, title, price;
+        ProgressBar progressBar;
+        TextView company, title, priceT, priceN, date;
 
         imageView = view.findViewById(R.id.imgURI);
         new DownloadImageTask(imageView).execute(products.get(position).getImg_url());
         company = view.findViewById(R.id.company);
         title = view.findViewById(R.id.title);
-        price = view.findViewById(R.id.price);
+        priceT = view.findViewById(R.id.priceT);
+        priceN = view.findViewById(R.id.priceN);
+        date = view.findViewById(R.id.date);
+        progressBar = view.findViewById(R.id.progress);
 
 
         title.setText(products.get(position).getTitle());
         company.setText(products.get(position).getCompany());
-        price.setText(products.get(position).getPrice());
+        priceT.setText(products.get(position).getPrice());
+        priceN.setText(""); //현재 할인 중인 가격을 알 수 없음
+        progressBar.setProgress(0);//현재 주문된 개수를 알 수 없음
+        date.setText("~" + products.get(position).getClosing_time());
+
+
 
         view.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(context, HProductActivity.class);
+                Intent intent = new Intent(context, JGroupProductActivity.class);
                 intent.putExtra("id", products.get(position).getId());
                 intent.putExtra("title", products.get(position).getTitle());
                 intent.putExtra("brand", products.get(position).getCompany());
@@ -77,7 +83,14 @@ public class FSubCategoryAdapter extends PagerAdapter {
                 intent.putExtra("info_seller", products.get(position).getInfo_seller());
                 intent.putExtra("info_manufacturer", products.get(position).getInfo_manyfacturer());
                 intent.putExtra("info_country", products.get(position).getInfo_country());
-                intent.putExtra("subCount", products.get(position).getSubCount());
+                intent.putExtra("dis1q", products.get(position).getSale1q());
+                intent.putExtra("dis1r", products.get(position).getSale1r());
+                intent.putExtra("dis2q", products.get(position).getSale2q());
+                intent.putExtra("dis2r", products.get(position).getSale2r());
+                intent.putExtra("dis3q", products.get(position).getSale3q());
+                intent.putExtra("dis3r", products.get(position).getSale3r());
+                intent.putExtra("reviews", products.get(position).getReviews());
+                intent.putExtra("group_url", products.get(position).getGroup_url());
                 context.startActivity(intent);
 
             }
@@ -115,5 +128,6 @@ public class FSubCategoryAdapter extends PagerAdapter {
             bmImage.setImageBitmap(result);
         }
     }
+
 
 }

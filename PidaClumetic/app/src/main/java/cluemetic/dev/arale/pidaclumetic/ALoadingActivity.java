@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.os.AsyncTask;
 import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -18,10 +19,22 @@ import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
 public class ALoadingActivity extends AppCompatActivity {
     public final int MY_PERMISSIONS_REQUEST_INTERNET = 1;
     ImageView logo;
     String token="";
+    String refresh="";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,6 +103,7 @@ public class ALoadingActivity extends AppCompatActivity {
         //get the saved token
         SharedPreferences getval = getSharedPreferences("user", MODE_PRIVATE);
         token = getval.getString("access_token", "");
+        refresh = getval.getString("refresh_token", "");
 
         //for animation, go to other activity after 2 seconds delay.
         handler.postDelayed(new Runnable() {
@@ -101,16 +115,16 @@ public class ALoadingActivity extends AppCompatActivity {
                     editor.apply();
                     Intent i = new Intent(getBaseContext(), DTutorialActivity.class);
                     startActivity(i);
+                    finish();
                 }
                 else if (token.equals("")){
                     Intent notlogged = new Intent(getBaseContext(), BLoginActivity.class);
                     startActivity(notlogged);
+                    finish();
                 }
                 else{
-                    Intent alreadyLogin = new Intent(getBaseContext(), ECategoryActivity.class);
-                    startActivity(alreadyLogin);
+                    new RefreshToken().execute();
                 }
-                finish();
             }
         }, 2000);
 
@@ -131,5 +145,59 @@ public class ALoadingActivity extends AppCompatActivity {
                 });
         AlertDialog alertDialog=dialog.create();
         alertDialog.show();
+    }
+
+
+
+    private class RefreshToken extends AsyncTask<String, Void, Boolean> {
+        @Override
+        protected void onPreExecute() { }
+
+
+        @Override
+        protected Boolean doInBackground(String... params) {
+            try{
+                URL url = new URL("http://ec2-13-125-246-38.ap-northeast-2.compute.amazonaws.com/o/token/?client_id=yg30yWvkbNXIjDbA4mDLimNkyCgZpriBy6c5k8yU&client_secret=4yRNL6m1LUsHPP8ohiDLfnnPVQ8Vikh1EMGYSRhsTKzDRZoAKYZm2HZPe4Ls9HTJuTwjJddcFJmivKCVtAve5yPzmJ9M6pO5XGmh3DmARscXu4L8cRSrk8XpkoXHYFZW&grant_type=refresh_token&refresh_token="+
+                    refresh + "&access_token=" + token);
+                HttpURLConnection con = (HttpURLConnection) url.openConnection();
+                con.setRequestMethod("POST");
+                con.setRequestProperty("Content-Type", "application/json");
+                con.setDoInput(true);
+                con.connect();
+
+                InputStream stream = con.getInputStream();
+                BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
+                StringBuffer buffer = new StringBuffer();
+                String line = "";
+                while ((line = reader.readLine()) != null) {
+                    buffer.append(line);
+                }
+
+                con.disconnect();
+                reader.close();
+                JSONObject Jres = new JSONObject(buffer.toString());
+                token = Jres.getString("access_token");
+                refresh = Jres.getString("refresh_token");
+
+                return null;
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+            SharedPreferences getvall = getSharedPreferences("user", MODE_PRIVATE);
+            SharedPreferences.Editor editor = getvall.edit();
+            editor.putString("access_token", token);
+            editor.putString("refresh_token", refresh);
+            editor.apply();
+
+            Intent alreadyLogin = new Intent(getBaseContext(), ECategoryActivity.class);
+            startActivity(alreadyLogin);
+            finish();
+        }
     }
 }

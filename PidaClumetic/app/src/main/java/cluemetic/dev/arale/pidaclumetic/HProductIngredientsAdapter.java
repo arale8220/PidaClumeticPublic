@@ -6,11 +6,13 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
+import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.v4.view.PagerAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -24,12 +26,15 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
 
-public class HProductIngredientsAdapter extends BaseAdapter {
+public class HProductIngredientsAdapter extends ArrayAdapter {
 
     // Adapter에 추가된 데이터를 저장하기 위한 ArrayList
     private ArrayList<HIngredient> listViewItemList;
+    private Context mContext;
 
-    public HProductIngredientsAdapter(ArrayList<HIngredient> listViewItemList) {
+    public HProductIngredientsAdapter(@NonNull Context context, ArrayList<HIngredient> listViewItemList) {
+        super(context, 0 , listViewItemList);
+        mContext = context;
         this.listViewItemList = listViewItemList;
     }
 
@@ -56,7 +61,7 @@ public class HProductIngredientsAdapter extends BaseAdapter {
         TextView titleTextView = (TextView) convertView.findViewById(R.id.ingredientName) ;
 
         // Data Set(listViewItemList)에서 position에 위치한 데이터 참조 획득
-        HIngredient listViewItem = listViewItemList.get(position);
+        HIngredient listViewItem = listViewItemList.get(pos);
 
         // 아이템 내 각 위젯에 데이터 반영
         iconImageView.setImageDrawable(listViewItem.getIcon());

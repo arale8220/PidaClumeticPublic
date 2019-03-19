@@ -1,7 +1,25 @@
 package cluemetic.dev.arale.pidaclumetic;
 
 public class Product {
-    private String title, price, company, id, info_url, img_url, info_seller, info_manyfacturer, info_country ;
+    private String title;
+    private String price;
+    private String company;
+    private String id;
+    private String info_url;
+    private String img_url;
+    private String info_seller;
+    private String info_manyfacturer;
+    private String info_country;
+
+    public String getSubCount() {
+        return subCount;
+    }
+
+    public void setSubCount(String subCount) {
+        this.subCount = subCount;
+    }
+
+    private String subCount ;
 
     public String getTitle() {
         return title;
@@ -75,7 +93,7 @@ public class Product {
         this.info_country = info_country;
     }
 
-    public Product(String title, String price, String company, String id, String info_url, String img_url, String info_seller, String info_manyfacturer, String info_country) {
+    public Product(String title, String price, String company, String id, String info_url, String img_url, String info_seller, String info_manyfacturer, String info_country, String subCount) {
         this.title = title;
         this.price = price;
         this.company = company;
@@ -85,5 +103,6 @@ public class Product {
         this.info_seller = info_seller;
         this.info_manyfacturer = info_manyfacturer;
         this.info_country = info_country;
+        this.subCount = subCount;
     }
 }

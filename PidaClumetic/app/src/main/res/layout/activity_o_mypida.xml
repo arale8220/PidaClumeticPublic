@@ -2,9 +2,10 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/back"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:clipToPadding="false"
+    android:clipChildren="false">
 
 
     <android.support.v7.widget.Toolbar
@@ -19,7 +20,7 @@
             android:id="@+id/text_category"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="카테고리"
+            android:text="My피다"
             android:textColor="@color/drk_gray"
             android:textSize="20sp"
             app:fontFamily="@font/notosans" />
@@ -48,46 +49,24 @@
     </android.support.v7.widget.Toolbar>
 
     <View
+        android:id="@+id/view"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="@color/lgt_gray"
         app:layout_constraintTop_toBottomOf="@id/toolbar" />
 
-
-    <ScrollView
+    <android.support.v4.view.ViewPager
+        android:id="@+id/viewPager"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_centerInParent="true"
+        android:layout_marginBottom="8dp"
+        android:clipToPadding="false"
+        android:foregroundGravity="center"
+        android:overScrollMode="never"
         app:layout_constraintBottom_toTopOf="@+id/bottomNavigationView"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar">
+        app:layout_constraintTop_toBottomOf="@+id/view"></android.support.v4.view.ViewPager>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp">
-
-            <ImageButton
-                android:id="@+id/cream"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:adjustViewBounds="true"
-                android:scaleType="centerInside"
-                app:srcCompat="@drawable/img_cream"
-                android:background="#00000000"
-                android:layout_margin="10dp"/>
-
-            <ImageButton
-                android:id="@+id/baby"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:adjustViewBounds="true"
-                android:scaleType="centerInside"
-                app:srcCompat="@drawable/img_baby"
-                android:background="#00000000"
-                android:layout_margin="10dp"/>
-        </LinearLayout>
-    </ScrollView>
 
 
     <android.support.design.widget.BottomNavigationView
