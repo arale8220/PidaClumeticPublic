@@ -204,7 +204,8 @@ public class FSubCategoryActivity extends AppCompatActivity {
 
     void showBtn(){
         SharedPreferences tut = getSharedPreferences("tester", MODE_PRIVATE);
-        Integer mode = Integer.valueOf(tut.getString("count", "0"));
+        Integer mode = tut.getInt("count", 0);
+        Log.i("###", String.valueOf(mode));
         switch (mode){
             case 1:
                 picker.setImageResource(R.drawable.selection_1_selected);

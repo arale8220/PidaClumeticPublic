@@ -344,18 +344,26 @@ public class JGroupProductActivity extends AppCompatActivity {
     {
         AlertDialog.Builder builder3 = new AlertDialog.Builder(this);
         builder3.setTitle("공동구매");
-        builder3.setMessage("구매할 상품의 개수를 선택해주세요. \n\n 공동구매의 경우 상품은 원가로 결제되며, 공동구매가 마감된 이후 할인액만큼 환불이 이루어집니다.");
-        final NumberPicker np = new NumberPicker(JGroupProductActivity.this);
+        builder3.setMessage("구매할 상품의 개수를 선택해주세요. \n\n 공동구매의 경우 상품은 원가로 결제되며, 공동구매가 마감된 이후 할인액만큼 환불이 이루어집니다. \n\n 주의하세요! 확인을 누르면 구매가 확정됩니다.");
+        final int[] num = {0};
 
-        np.setMaxValue(20); // max value 100
-        np.setMinValue(1);   // min value 0
-        np.setWrapSelectorWheel(false);
-        np.setOnValueChangedListener((NumberPicker.OnValueChangeListener) this);
+        NumberPicker np = new NumberPicker(this);
+        np.setMaxValue(10);
+        np.setMinValue(1);
+        NumberPicker.OnValueChangeListener npListener = new NumberPicker.OnValueChangeListener() {
+            @Override
+            public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
+                num[0] = newVal;
+            }
+        };
+        np.setOnValueChangedListener(npListener);
+
+        builder3.setView(np);
 
         builder3.setPositiveButton("확인",
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                        new Purchase(group_url, np.getValue()).execute();
+                        new Purchase(group_url, num[0]).execute();
                     }
                 });
         builder3.setNegativeButton("취소", new DialogInterface.OnClickListener() {
@@ -416,7 +424,7 @@ public class JGroupProductActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Boolean aBoolean) {
             if (aBoolean) Toast.makeText(JGroupProductActivity.this, "주문에 성공하였습니다. My피다에서 확인해주세요", Toast.LENGTH_SHORT).show();
-            else Toast.makeText(JGroupProductActivity.this, "주문에 실패하였습니다. 배송/결제정보를 입력해주세요", Toast.LENGTH_SHORT).show();
+            else Toast.makeText(JGroupProductActivity.this, "주문에 실패하였습니다. 입력한 정보를 입력해주세요", Toast.LENGTH_SHORT).show();
         }
     }
 }

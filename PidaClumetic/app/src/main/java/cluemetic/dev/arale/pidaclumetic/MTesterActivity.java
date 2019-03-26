@@ -9,9 +9,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -29,6 +31,8 @@ public class MTesterActivity extends AppCompatActivity {
     ImageButton picker;
     Button x1, x2, x3;
     Button payment, delivery, purchase;
+    ImageView x11, x22, x33;
+
 
 
     @Override
@@ -45,63 +49,72 @@ public class MTesterActivity extends AppCompatActivity {
         showTesters();
 
 
-        Button.OnClickListener onClickListener = view -> {
+        View.OnClickListener onClickListener = view -> {
 
-            String result="";
             switch (view.getId()) {
-                case R.id.tester1 :
+                case R.id.imageView :
                     SharedPreferences tut = getSharedPreferences("tester", MODE_PRIVATE);
-                    Integer mode = Integer.valueOf(tut.getString("count", "0"));
-                    String[] ids = tut.getString("testers", "").split(" ");
+                    try {
+                        JSONArray products = new JSONArray(tut.getString("products", "[]"));
+                        Integer count = tut.getInt("count", 0);
+                        JSONArray newProducts = new JSONArray();
+                        for (int i = 0; i<count; i++){
+                            if (i!=0) newProducts.put(products.getJSONObject(i));
+                        }
+                        SharedPreferences.Editor editor = tut.edit();
+                        editor.putInt("count", count-1);
+                        editor.putString("products", newProducts.toString());
+                        editor.apply();
 
-                    if (ids.length==3){
-                        result = ids[1]+" ";
-                    }else if (ids.length>=4){
-                        result = ids[1]+" "+ids[2]+" ";
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-
-                    SharedPreferences.Editor editor = tut.edit();
-                    editor.putString("count", String.valueOf(mode-1));
-                    editor.putString("testers", result);
-                    editor.apply();
 
                     showTesters();
                     showBtn();
 
                     break ;
-                case R.id.tester2 :
+
+                case R.id.imageView2 :
                     SharedPreferences tut2 = getSharedPreferences("tester", MODE_PRIVATE);
-                    Integer mode2 = Integer.valueOf(tut2.getString("count", "0"));
-                    String[] ids2 = tut2.getString("testers", "").split(" ");
+                    try {
+                        JSONArray products2 = new JSONArray(tut2.getString("products", "[]"));
+                        Integer count2 = tut2.getInt("count", 0);
+                        JSONArray newProducts = new JSONArray();
+                        for (int i = 0; i<count2; i++){
+                            if (i!=0) newProducts.put(products2.getJSONObject(i));
+                        }
+                        SharedPreferences.Editor editor2 = tut2.edit();
+                        editor2.putInt("count", count2-1);
+                        editor2.putString("products", newProducts.toString());
+                        editor2.apply();
 
-                    if (ids2.length==3){
-                        result = ids2[0]+" ";
-                    }else if (ids2.length>=4){
-                        result = ids2[0]+" "+ids2[2]+" ";
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-
-                    SharedPreferences.Editor editor2 = tut2.edit();
-                    editor2.putString("count", String.valueOf(mode2-1));
-                    editor2.putString("testers", result);
-                    editor2.apply();
 
                     showTesters();
                     showBtn();
 
                     break ;
-                case R.id.tester3 :
+
+                case R.id.imageView3 :
                     SharedPreferences tut3 = getSharedPreferences("tester", MODE_PRIVATE);
-                    Integer mode3 = Integer.valueOf(tut3.getString("count", "0"));
-                    String[] ids3 = tut3.getString("testers", "").split(" ");
+                    try {
+                        JSONArray products3 = new JSONArray(tut3.getString("products", "[]"));
+                        Integer count3 = tut3.getInt("count", 0);
+                        JSONArray newProducts = new JSONArray();
+                        for (int i = 0; i<count3; i++){
+                            if (i!=0) newProducts.put(products3.getJSONObject(i));
+                        }
+                        SharedPreferences.Editor editor3 = tut3.edit();
+                        editor3.putInt("count", count3-1);
+                        editor3.putString("products", newProducts.toString());
+                        editor3.apply();
 
-                    if (ids3.length>=3){
-                        result = ids3[0]+" "+ids3[1]+" ";
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-
-                    SharedPreferences.Editor editor3 = tut3.edit();
-                    editor3.putString("count", String.valueOf(mode3-1));
-                    editor3.putString("testers", result);
-                    editor3.apply();
 
                     showTesters();
                     showBtn();
@@ -109,9 +122,13 @@ public class MTesterActivity extends AppCompatActivity {
                     break ;
             }
         };
-        x1.setOnClickListener(onClickListener);
-        x2.setOnClickListener(onClickListener);
-        x3.setOnClickListener(onClickListener);
+
+        x11 = findViewById(R.id.imageView);
+        x22 = findViewById(R.id.imageView2);
+        x33 = findViewById(R.id.imageView3);
+        x11.setOnClickListener(onClickListener);
+        x22.setOnClickListener(onClickListener);
+        x33.setOnClickListener(onClickListener);
 
         payment = findViewById(R.id.payment);
         payment.setOnClickListener(new View.OnClickListener() {
@@ -138,7 +155,7 @@ public class MTesterActivity extends AppCompatActivity {
                 SharedPreferences tut = getSharedPreferences("user", MODE_PRIVATE);
                 String[] ids = tut.getString("testers", "").split(" ");
                 new Purchase(tut.getBoolean("paymentOk", false), tut.getBoolean("deliveryOk", false), tut.getString("access_token", ""))
-                    .execute(tut.getString("count", "0"), ids[0], ids[1], ids[2]);
+                    .execute(String.valueOf(tut.getInt("count", 0)), ids[0], ids[1], ids[2]);
             }
         });
 
@@ -195,7 +212,7 @@ public class MTesterActivity extends AppCompatActivity {
                     if (con.getResponseCode() == HttpURLConnection.HTTP_OK) {
                         SharedPreferences tut2 = getSharedPreferences("tester", MODE_PRIVATE);
                         SharedPreferences.Editor ed = tut2.edit();
-                        ed.putString("count", "0");
+                        ed.putInt("count", 0);
                         ed.putString("testers", "");
                         ed.apply();
                         return true;
@@ -276,18 +293,27 @@ public class MTesterActivity extends AppCompatActivity {
     }
 
     void showTesters(){
+        x1.setText("");
+        x2.setText("");
+        x3.setText("");
         SharedPreferences tut = getSharedPreferences("tester", MODE_PRIVATE);
-        String[] ids = tut.getString("testers", "").split(" ");
-        for (int i = 0; i<ids.length; i++){
-            if (i==0) new Getname(1).execute(ids[i]);
-            else if (i==1) new Getname(2).execute(ids[i]);
-            else if (i==3) new Getname(3).execute(ids[i]);
+        try {
+            JSONArray products = new JSONArray(tut.getString("products", "[]"));
+            Integer count = tut.getInt("count", 0);
+            for (int i = 0; i<count; i++){
+                if (i==0) x1.setText(products.getJSONObject(i).getString("name"));
+                else if (i==1) x2.setText(products.getJSONObject(i).getString("name"));
+                else if (i==2) x3.setText(products.getJSONObject(i).getString("name"));
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
+
     }
 
     void showBtn(){
         SharedPreferences tut = getSharedPreferences("tester", MODE_PRIVATE);
-        Integer mode = Integer.valueOf(tut.getString("count", "0"));
+        Integer mode = tut.getInt("count", 0);
         switch (mode){
             case 1:
                 picker.setImageResource(R.drawable.selection_1_selected);
@@ -308,5 +334,6 @@ public class MTesterActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         showBtn();
+        showTesters();
     }
 }

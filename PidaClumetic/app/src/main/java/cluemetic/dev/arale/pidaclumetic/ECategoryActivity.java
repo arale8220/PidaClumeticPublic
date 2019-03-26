@@ -166,17 +166,16 @@ public class ECategoryActivity extends AppCompatActivity {
         protected Boolean doInBackground(Integer... params) {
             try {
 
-                URL url = new URL(json_url + String.valueOf(params[0]));
+                URL url = new URL(json_url + String.valueOf(params[0]) + "/");
                 HttpURLConnection con = (HttpURLConnection) url.openConnection();
                 con.setRequestMethod("GET");
-                con.setRequestProperty("Cache-Control", "no-cache");
                 con.setRequestProperty("Content-Type", "application/json");
                 con.setRequestProperty("Accept", "application/json");
-                con.setDoOutput(true);
                 con.setDoInput(true);
                 con.connect();
 
 
+                Log.i("###", "cat1");
                 if (con.getResponseCode() == HttpURLConnection.HTTP_OK) {
                     StringBuilder result = new StringBuilder();
                     InputStream in = new BufferedInputStream(con.getInputStream());
@@ -185,9 +184,11 @@ public class ECategoryActivity extends AppCompatActivity {
                     while ((line = reader.readLine()) != null) {
                         result.append(line);
                     }
+                    Log.i("###", "cat2");
 
                     JSONObject response = new JSONObject(result.toString());
                     JSONArray responsearray = response.getJSONArray("products");
+                    Log.i("###", "cat3");
                     ArrayList<String> ar = new ArrayList<String>();
                     for (int i = 0; i < responsearray.length(); i++) {
                         ar.add(responsearray.getString(i));
@@ -206,7 +207,7 @@ public class ECategoryActivity extends AppCompatActivity {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            return  null;
+            return  false;
         }
 
         @Override

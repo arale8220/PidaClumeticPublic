@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clipToPadding="false"
+    android:clipChildren="false">
+
+
+    <ImageButton
+        android:id="@+id/button"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_marginTop="64dp"
+        android:background="@drawable/btn_test_order"
+        android:src="@drawable/selection_3_selected"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        android:elevation="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <TextView
+        android:id="@+id/textView5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="48dp"
+        android:fontFamily="@font/notosans"
+        android:text="신청 완료!"
+        android:textColor="@color/black"
+        android:textSize="36sp"
+        android:textStyle="normal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button" />
+
+    <Button
+        android:id="@+id/tester"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:text="받아보기"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_weight="1"
+        android:background="@color/colorPrimary"
+        android:textColor="@color/white"
+        android:fontFamily="@font/notosans"
+        android:clipToPadding="false"
+        android:clipChildren="false"
+        android:elevation="16dp"/>
+
+</android.support.constraint.ConstraintLayout>

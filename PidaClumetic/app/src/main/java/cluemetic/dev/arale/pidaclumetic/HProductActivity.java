@@ -20,6 +20,9 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.NumberPicker;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.common.base.Strings;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -83,6 +86,7 @@ public class HProductActivity extends AppCompatActivity {
         mmanufac = findViewById(R.id.inform2);
         mcountry = findViewById(R.id.inform3);
         minfourl = findViewById(R.id.inform4);
+
         mtitle.setText(tit);
         mcompany.setText(com);
         mprice.setText(pri);
@@ -99,9 +103,9 @@ public class HProductActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 SharedPreferences pref = getSharedPreferences("tester", MODE_PRIVATE);
-                Integer tester_count = Integer.valueOf(pref.getString("count", "0"));
+                Integer tester_count = pref.getInt("count", 0);
 
-                if (!(subCount.equals("1"))) {
+                if (subCount.equals("1")) {
                     if (tester_count>2) show(1);
                     else show(0);
                 }else show(2);
@@ -264,7 +268,8 @@ public class HProductActivity extends AppCompatActivity {
 
                     //get strings from response and add to adapter
                     JSONObject response = new JSONObject(result.toString());
-                    arr.add(new HReview(response.getString("owner").substring(68,70)+"**", response.getString("content")));
+                    String temp = response.getString("owner").substring(68,69) + Strings.repeat("*", response.getString("owner").length() - 70);
+                    arr.add(new HReview(temp, response.getString("content")));
                 }
                 return arr;
 
@@ -323,36 +328,80 @@ public class HProductActivity extends AppCompatActivity {
         }
     }
 
+    void addP (){
+        try {
+            SharedPreferences pref = getSharedPreferences("tester", MODE_PRIVATE);
+            Integer tester_count = pref.getInt("count",0);
+            JSONArray products = new JSONArray(pref.getString("products", "[]"));
+
+            SharedPreferences.Editor editor = pref.edit();
+            JSONObject newP = new JSONObject();
+
+            newP.put("name", tit);
+            newP.put("url", json_url+id+"/");
+            products.put(newP);
+
+            editor.putInt("count", tester_count + 1);
+            editor.putString("products", products.toString());
+            editor.apply();
+            Log.i("###", String.valueOf(tester_count+1));
+            Log.i("###", products.toString());
+
+
+        } catch (JSONException e) {
+        e.printStackTrace();
+    }
+    }
+
 
     //각 모드에 따라 변경 창 띄우기
-    void show(Integer mode)
-    {
+    void show(Integer mode) {
         switch (mode) {
 
             case 0:
                 AlertDialog.Builder builder0 = new AlertDialog.Builder(this);
                 builder0.setTitle("테스터");
-                builder0.setMessage("해당 제품이 테스터에 추가됩니다.");
-                builder0.setPositiveButton("확인",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                SharedPreferences pref = getSharedPreferences("tester", MODE_PRIVATE);
-                                Integer tester_count = Integer.valueOf(pref.getString("count", "0"));
-                                String testers = pref.getString("testers", "");
-                                SharedPreferences.Editor editor = pref.edit();
-                                editor.putString("count", String.valueOf(tester_count + 1));
-                                editor.putString("testers", testers + id + " ");
-                                editor.apply();
+
+                SharedPreferences pref = getSharedPreferences("tester", MODE_PRIVATE);
+                Integer tester_count = pref.getInt("count", 0);
+                JSONArray products = new JSONArray();
+                try {
+                    products = new JSONArray(pref.getString("products", "[]"));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                if (tester_count >= 3){
+                    builder0.setMessage("이미 세개의 테스터를 선택하셨습니다.");
+                    builder0.setPositiveButton("확인",(dialog, which) -> {});
+                    builder0.show();
+                    break;
+                }else{
+                    for (int i=0 ; i<tester_count ; i++){
+                        try {
+                            if (tit.equals(products.getJSONObject(i).getString("name"))){
+                                builder0.setMessage("이미 테스터로 추가된 상품입니다.");
+                                builder0.setPositiveButton("확인",(dialog, which) -> {});
+                                builder0.show();
+                                break;
                             }
-                        });
-                builder0.show();
-                break;
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    builder0.setMessage("해당 제품이 테스터에 추가됩니다.");
+                    builder0.setPositiveButton("확인", (dialog, which) -> { addP(); });
+                    builder0.show();
+                    break;
+                }
+
+
 
 
             case 1:
                 AlertDialog.Builder builder1 = new AlertDialog.Builder(this);
                 builder1.setTitle("테스터");
-                builder1.setMessage("이미 세개의 테스터를 모두 고르셔서, 추가되지 않았습니다.");
+                builder1.setMessage("이미 세개의 테스터를 선택하셨습니다.");
                 builder1.setPositiveButton("확인",
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
@@ -378,28 +427,73 @@ public class HProductActivity extends AppCompatActivity {
             case 3:
                 AlertDialog.Builder builder3 = new AlertDialog.Builder(this);
                 builder3.setTitle("장바구니");
-                builder3.setMessage("장바구니에 추가할 상품의 개수를 고르고, 확인을 눌러주세요");
-                final NumberPicker np = new NumberPicker(HProductActivity.this);
+                builder3.setMessage("장바구니에 추가할 상품의 개수를 고르고, 확인을 눌러주세요. 취소를 누를 경우 추가되지 않습니다.");
+                final int[] num = {0};
 
-                np.setMaxValue(100); // max value 100
-                np.setMinValue(1);   // min value 0
-                np.setWrapSelectorWheel(false);
-                np.setOnValueChangedListener((NumberPicker.OnValueChangeListener) this);
+                NumberPicker np = new NumberPicker(this);
+                np.setMaxValue(10);
+                np.setMinValue(1);
+                NumberPicker.OnValueChangeListener npListener = new NumberPicker.OnValueChangeListener() {
+                    @Override
+                    public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
+                        num[0] = newVal;
+                    }
+                };
+                np.setOnValueChangedListener(npListener);
+
+                builder3.setView(np);
 
                 builder3.setPositiveButton("확인",
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                                 try {
                                     SharedPreferences pref = getSharedPreferences("order", MODE_PRIVATE);
-                                    JSONObject jinit = new JSONObject();
-                                    for (int i = 0; i < 22; i++)
-                                        jinit.put(String.valueOf(i + 1), 0);
-                                    JSONObject j = new JSONObject(pref.getString("products", jinit.toString()));
+                                    JSONArray order = new JSONArray(pref.getString("products","[]"));
+                                    int orderN = pref.getInt("count",0);
 
-                                    j.put(id, j.getInt(id) + np.getValue());
                                     SharedPreferences.Editor editor = pref.edit();
-                                    editor.putString("products", j.toString());
-                                    editor.apply();
+                                    JSONArray newProducts = new JSONArray();
+
+                                    if (orderN == 0){
+                                        JSONObject newJ = new JSONObject();
+                                        newJ.put("url", json_url+id+"/");
+                                        newJ.put("img", img);
+                                        newJ.put("id", id);
+                                        newJ.put("price", pri);
+                                        newJ.put("quantity", num[0]);
+                                        newProducts.put(newJ);
+                                        editor.putString("products", newProducts.toString());
+                                        editor.putInt("count",1);
+                                        editor.apply();
+                                    }
+
+                                    else{
+                                        boolean notExist = true;
+                                        for (int i = 0; i < orderN; i++){
+
+                                            JSONObject curr = order.getJSONObject(i);
+                                            if (id.equals(curr.getString("id"))){
+                                                curr.put("quantity", curr.getInt("quantity")+num[0]);
+                                                notExist = false;
+                                            }
+                                            newProducts.put(curr);
+
+                                            if((i == orderN-1) & notExist){
+                                                JSONObject newJ = new JSONObject();
+                                                newJ.put("url", json_url+id+"/");
+                                                newJ.put("img", img);
+                                                newJ.put("id", id);
+                                                newJ.put("price", pri);
+                                                newJ.put("quantity", num[0]);
+                                                newProducts.put(newJ);
+                                                editor.putString("products", newProducts.toString());
+                                                editor.putInt("count", orderN+1);
+                                                editor.apply();
+                                            }
+                                        }
+                                    }
+
+                                    Toast.makeText(HProductActivity.this, "상품이 추가되었습니다", Toast.LENGTH_SHORT).show();
 
                                 } catch (JSONException e) {
                                     e.printStackTrace();
