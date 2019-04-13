@@ -8,6 +8,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
@@ -34,7 +35,7 @@ public class ISetupActivity extends AppCompatActivity {
     Button emailBtn, pwBtn, genderBtn, ageBtn, skintypeBtn, concernBtn, allergyBtn;
     SharedPreferences sharedPreferences;
     String json_url;
-    String access_token;
+    String access_token, refresh_token, payment, delivery;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,7 +58,7 @@ public class ISetupActivity extends AppCompatActivity {
                 } else if (itemId == R.id.navigation_mypida) {
                     startActivity(new Intent(this, OPidaActivity.class));
                 } else if (itemId == R.id.navigation_information) {
-                    startActivity(new Intent(getBaseContext(), ISetupActivity.class));
+                    return;
                 }
                 finish();
             }, 0);
@@ -99,10 +100,17 @@ public class ISetupActivity extends AppCompatActivity {
                 case R.id.account3 :
                     goToOther(3);
                     break;
+
+
                 case R.id.center1 :
+                    goToOther(4);
                     break;
                 case R.id.center2 :
+                    goToOther(5);
                     break ;
+
+
+
                 case R.id.center3 :
                     goToOther(6);
                     break ;
@@ -144,7 +152,17 @@ public class ISetupActivity extends AppCompatActivity {
                 startActivity(intent);
                 break;
             case 3:
-                intent = new Intent(getBaseContext(), ISetupAccount2Activity.class);
+                intent = new Intent(getBaseContext(), ISetupAccount3Activity.class);
+                startActivity(intent);
+                break;
+            case 4:
+                intent = new Intent(getBaseContext(), ISetupNoticeActivity.class);
+                intent.putExtra("notice0faq1", 0);
+                startActivity(intent);
+                break;
+            case 5:
+                intent = new Intent(getBaseContext(), ISetupNoticeActivity.class);
+                intent.putExtra("notice0faq1", 1);
                 startActivity(intent);
                 break;
             case 6:
@@ -181,22 +199,19 @@ public class ISetupActivity extends AppCompatActivity {
         protected JSONObject doInBackground(String... params) {
             try{
                 //make information to string
-                String strParams = "access_token=" + access_token;
+                String strParams = "?access_token=" + access_token;
 
-                URL url = new URL("http://ec2-13-125-246-38.ap-northeast-2.compute.amazonaws.com/users/" + email);
+                Log.i("###", "get user data at setup activity");
+                URL url = new URL("http://ec2-13-125-246-38.ap-northeast-2.compute.amazonaws.com/users/" + email + strParams);
                 HttpURLConnection urlConn = (HttpURLConnection) url.openConnection();
                 urlConn.setRequestMethod("GET");
                 urlConn.setRequestProperty("Content-Type", "application/json");
                 urlConn.setDoInput(true);
-                urlConn.setDoOutput (true);
-
-                OutputStream outputStream = urlConn.getOutputStream();
-                outputStream.write(strParams.getBytes( "UTF-8" ));
-                outputStream.flush();
-                outputStream.close();
+                Log.i("###", "get user data at setup activity");
 
 
                 if (urlConn.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                    Log.i("###", "get user data at setup activity");
 
                     InputStream stream = urlConn.getInputStream();
                     BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
@@ -210,6 +225,7 @@ public class ISetupActivity extends AppCompatActivity {
                     urlConn.disconnect();
 
 
+                    Log.i("###", "get user data at setup activity");
                     userid = String.valueOf(JsonResult.getInt("id"));
                     gender = String.valueOf(JsonResult.getInt("gender"));
                     age = String.valueOf(JsonResult.getInt("age"));
@@ -225,6 +241,7 @@ public class ISetupActivity extends AppCompatActivity {
                         allergy = allergy + curr.getString(i).toUpperCase();
                     }
 
+                    Log.i("###", "get user data at setup activity");
                     SharedPreferences.Editor editor = sharedPreferences.edit();
                     editor.putString("skintype", skintype);
                     editor.putString("userid", userid);
@@ -235,6 +252,7 @@ public class ISetupActivity extends AppCompatActivity {
                     editor.putString("payment", JsonResult.getString("default_payment_information"));
                     editor.putString("delivery", JsonResult.getString("default_delivery_information"));
                     editor.apply();
+                    Log.i("###", "get user data finished at setup activity");
 
 
 

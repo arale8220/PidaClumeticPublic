@@ -125,17 +125,22 @@ public class CSignupActivity extends AppCompatActivity {
                 //to check only username, give only username
                 JSONObject jsonObject = new JSONObject();
                 jsonObject.put("username", email);
+                Log.i("###","hhh");
 
                 OutputStream outStream = urlConn.getOutputStream();
                 BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outStream));
                 writer.write(jsonObject.toString());
                 writer.flush();
                 writer.close();
+                Log.i("###","hhh2");
 
-                //다른 설정들을 넣지 않아 BAD REQUEST로 뜰 것임
+
+                Log.i("###",String.valueOf(urlConn.getResponseCode()));
+                //다른 설정들을 넣지 않아 BAD REQUEST로
                 if (urlConn.getResponseCode() == HttpURLConnection.HTTP_BAD_REQUEST) {
-
-                    InputStream stream = urlConn.getInputStream();
+                    Log.i("###","hhh3");
+                    InputStream stream = urlConn.getErrorStream();
+                    Log.i("###","hhh4");
                     BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
                     StringBuilder buffer = new StringBuilder();
                     String line = "";
@@ -143,16 +148,22 @@ public class CSignupActivity extends AppCompatActivity {
                         buffer.append(line);
                     }
                     reader.close();
+                    Log.i("###","hhh5");
+
 
                     //만약 이미 존재하는 유저이면 false 반환
                     JSONObject JsonResult = new JSONObject(buffer.toString());
                     JSONArray JsonArray = JsonResult.getJSONArray("username");
+                    Log.i("###","hhh6");
                     String responseStr = JsonArray.getString(0);
+                    urlConn.disconnect();
+                    Log.i("###","hhh7");
                     urlConn.disconnect();
                     return !(responseStr.equals("A user with that username already exists."));
                 }
 
-                urlConn.disconnect();
+
+
             } catch (JSONException e) {
                 e.printStackTrace();
                 return true; //만약 username에 대한 comments가 없으면 사용 가능한 아이디이므로 true 반환

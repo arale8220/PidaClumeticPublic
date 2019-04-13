@@ -49,6 +49,9 @@ public class JGroupProductActivity extends AppCompatActivity {
     HProductIngredientsAdapter ingredientAdapter;
     HProductReviewAdapter reviewAdapter;
     String json_url="http://ec2-13-125-246-38.ap-northeast-2.compute.amazonaws.com/products/";
+    String sale1q, sale1r, sale2q, sale2r, sale3q, sale3r;
+    TextView msale1q, msale1r, msale2q, msale2r, msale3q, msale3r;
+    String productU;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -56,22 +59,136 @@ public class JGroupProductActivity extends AppCompatActivity {
         setContentView(R.layout.activity_j_group_product);
 
         Intent intent = getIntent();
-        id = intent.getStringExtra("id");
+        group_url = intent.getStringExtra("group_url");
 
-        //get bitmap image from img and set mimg
-        img = intent.getStringExtra("image");
+        new GroupProductCreate().execute();
+
+
+
+
+
+    }
+
+
+
+
+    class GroupProductCreate extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+
+
+            try{
+                URL url = new URL(group_url);
+                HttpURLConnection urlConn = (HttpURLConnection) url.openConnection();
+                urlConn.setRequestMethod("GET");
+                urlConn.setDoInput(true);
+
+                if (urlConn.getResponseCode() == HttpURLConnection.HTTP_OK) {
+
+                    InputStream stream = urlConn.getInputStream();
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
+                    StringBuilder buffer = new StringBuilder();
+                    String line = "";
+                    while ((line = reader.readLine()) != null) {
+                        buffer.append(line);
+                    }
+                    reader.close();
+                    JSONObject curr = new JSONObject(buffer.toString());
+                    urlConn.disconnect();
+
+                    productU = curr.getString("product");
+                    sale1q = String.valueOf(curr.getJSONArray("discount_rates").getJSONObject(0).getInt("quantity"));
+                    sale1r = String.valueOf(curr.getJSONArray("discount_rates").getJSONObject(0).getInt("rate"));
+                    sale2q = String.valueOf(curr.getJSONArray("discount_rates").getJSONObject(1).getInt("quantity"));
+                    sale2r = String.valueOf(curr.getJSONArray("discount_rates").getJSONObject(1).getInt("rate"));
+                    sale3q = String.valueOf(curr.getJSONArray("discount_rates").getJSONObject(2).getInt("quantity"));
+                    sale3r = String.valueOf(curr.getJSONArray("discount_rates").getJSONObject(2).getInt("rate"));
+
+
+                    return null;
+                }
+
+                urlConn.disconnect();
+                return null;
+
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            new ProductCreate().execute();
+        }
+    }
+
+
+
+    class ProductCreate extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+
+
+            try{
+                URL url = new URL(productU);
+                HttpURLConnection urlConn = (HttpURLConnection) url.openConnection();
+                urlConn.setRequestMethod("GET");
+                urlConn.setDoInput(true);
+
+                if (urlConn.getResponseCode() == HttpURLConnection.HTTP_OK) {
+
+                    InputStream stream = urlConn.getInputStream();
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
+                    StringBuilder buffer = new StringBuilder();
+                    String line = "";
+                    while ((line = reader.readLine()) != null) {
+                        buffer.append(line);
+                    }
+                    reader.close();
+                    JSONObject JsonResult = new JSONObject(buffer.toString());
+                    urlConn.disconnect();
+
+                    com = JsonResult.getJSONObject("brand").getString("name");
+                    tit = JsonResult.getString("name");
+                    pri = String.valueOf(JsonResult.getInt("price"));
+                    sell = JsonResult.getString("info_seller");
+                    manu = JsonResult.getString("info_manufacturer");
+                    coun = JsonResult.getString("info_country");
+                    inf = JsonResult.getString("info_url");
+                    img = JsonResult.getString("image");
+                    id = String.valueOf(JsonResult.getInt("id"));
+
+                    return null;
+                }
+
+                urlConn.disconnect();
+                return null;
+
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            DoOnCreate();
+        }
+    }
+
+
+
+
+    void DoOnCreate(){
+
         mimg = findViewById(R.id.img);
         new ShowImageConnection().execute(img);
 
-        //set views
-        com = intent.getStringExtra("brand");
-        tit = intent.getStringExtra("title");
-        pri = intent.getStringExtra("price");
-        sell = intent.getStringExtra("info_seller");
-        manu = intent.getStringExtra("info_manufacturer");
-        coun = intent.getStringExtra("info_country");
-        inf = intent.getStringExtra("info_url");
-        group_url = intent.getStringExtra("group_url");
         mtitle = findViewById(R.id.title);
         mcompany = findViewById(R.id.company);
         mprice = findViewById(R.id.priceT);
@@ -80,14 +197,27 @@ public class JGroupProductActivity extends AppCompatActivity {
         mmanufac = findViewById(R.id.inform2);
         mcountry = findViewById(R.id.inform3);
         minfourl = findViewById(R.id.inform4);
+        msale1q = findViewById(R.id.sale1);
+        msale1r = findViewById(R.id.sale11);
+        msale2q = findViewById(R.id.sale2);
+        msale2r = findViewById(R.id.sale22);
+        msale3q = findViewById(R.id.sale3);
+        msale3r = findViewById(R.id.sale33);
 
         mtitle.setText(tit);
         mcompany.setText(com);
-        mprice.setText(pri);
+        mprice.setText("정가 " + pri + "원");
         mseller.setText(sell);
         mmanufac.setText(manu);
         mcountry.setText(coun);
-        //mpriceNow.setText("");
+        msale1q.setText(sale1q + "개 ~ ");
+        msale1r.setText(sale1r + "% 할인");
+        msale2q.setText(sale2q + "개 ~ ");
+        msale2r.setText(sale2r + "% 할인");
+        msale3q.setText(sale3q + "개 ~ ");
+        msale3r.setText(sale3r + "% 할인");
+        mpriceNow.setText(""); //현재 가격을 알 수 없음
+
         minfourl.setOnClickListener(v -> {
             Intent browse = new Intent( Intent.ACTION_VIEW , Uri.parse(inf) );
             startActivity( browse );
@@ -107,6 +237,12 @@ public class JGroupProductActivity extends AppCompatActivity {
         });
 
     }
+
+
+
+
+
+
 
 
 
@@ -345,7 +481,7 @@ public class JGroupProductActivity extends AppCompatActivity {
         AlertDialog.Builder builder3 = new AlertDialog.Builder(this);
         builder3.setTitle("공동구매");
         builder3.setMessage("구매할 상품의 개수를 선택해주세요. \n\n 공동구매의 경우 상품은 원가로 결제되며, 공동구매가 마감된 이후 할인액만큼 환불이 이루어집니다. \n\n 주의하세요! 확인을 누르면 구매가 확정됩니다.");
-        final int[] num = {0};
+        final int[] num = {1};
 
         NumberPicker np = new NumberPicker(this);
         np.setMaxValue(10);
@@ -390,6 +526,7 @@ public class JGroupProductActivity extends AppCompatActivity {
         @Override
         protected Boolean doInBackground(String... params) {
             try{
+
                 SharedPreferences dd = getSharedPreferences("user", MODE_PRIVATE);
                 String token = dd.getString("access_token", "");
                 URL url = new URL("http://ec2-13-125-246-38.ap-northeast-2.compute.amazonaws.com/group-purchase-orders/?access_token="+token);
@@ -412,7 +549,12 @@ public class JGroupProductActivity extends AppCompatActivity {
                 os.flush();
 
 
-                if (con.getResponseCode() == HttpURLConnection.HTTP_OK) return true;
+                Log.i("###", "group purchase at group product activity");
+                Log.i("###", post.toString());
+                Log.i("###", String.valueOf(con.getResponseCode()));
+                Log.i("###", con.getResponseMessage());
+                if ((con.getResponseCode() == HttpURLConnection.HTTP_OK) || (con.getResponseCode() == HttpURLConnection.HTTP_CREATED))
+                    return true;
 
 
             } catch (Exception e) {
@@ -423,8 +565,18 @@ public class JGroupProductActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(Boolean aBoolean) {
-            if (aBoolean) Toast.makeText(JGroupProductActivity.this, "주문에 성공하였습니다. My피다에서 확인해주세요", Toast.LENGTH_SHORT).show();
+            if (aBoolean) {
+                Intent i = new Intent(getBaseContext(), QPurchaseDoneActivity.class);
+                i.putExtra("type", 1);
+                i.putExtra("url", img);
+                startActivity(i);
+                finish();
+            }
+
             else Toast.makeText(JGroupProductActivity.this, "주문에 실패하였습니다. 입력한 정보를 입력해주세요", Toast.LENGTH_SHORT).show();
         }
     }
+
+
+
 }

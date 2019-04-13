@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -46,7 +47,7 @@ public class ISetupAccount3Activity extends AppCompatActivity {
         //툴바 제목 : 내정보
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
-        getSupportActionBar().setTitle("결제 정보");
+        getSupportActionBar().setTitle("배송 정보");
 
 
         //레이아웃의 컴포넌트들 불러오기
@@ -126,7 +127,7 @@ public class ISetupAccount3Activity extends AppCompatActivity {
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                                 com = et0.getText().toString();
-                                new Patch().execute("name", com);
+                                new Patch().execute();
                             }
                         });
                 builder0.show();
@@ -144,7 +145,7 @@ public class ISetupAccount3Activity extends AppCompatActivity {
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                                 num = et.getText().toString();
-                                new Patch().execute("contact", num);
+                                new Patch().execute();
                             }
                         });
                 builder1.show();
@@ -161,7 +162,7 @@ public class ISetupAccount3Activity extends AppCompatActivity {
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                                 date = et2.getText().toString();
-                                new Patch().execute("postal_code", date);
+                                new Patch().execute();
                             }
                         });
                 builder2.show();
@@ -178,7 +179,7 @@ public class ISetupAccount3Activity extends AppCompatActivity {
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                                 cvc = et3.getText().toString();
-                                new Patch().execute("address_line_road", cvc);
+                                new Patch().execute();
                             }
                         });
                 builder3.show();
@@ -196,7 +197,7 @@ public class ISetupAccount3Activity extends AppCompatActivity {
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                                 pw = et4.getText().toString();
-                                new Patch().execute("address_line_detail", pw);
+                                new Patch().execute();
                             }
                         });
                 builder4.show();
@@ -205,18 +206,6 @@ public class ISetupAccount3Activity extends AppCompatActivity {
         }
 
     }
-
-
-
-
-    private String getPwString(Integer count){
-        StringBuilder buf = new StringBuilder(count);
-        while (count-- > 0) {
-            buf.append("*");
-        }
-        return buf.toString();
-    }
-
 
 
     private class Connection extends AsyncTask<String, Void, Boolean> {
@@ -235,7 +224,6 @@ public class ISetupAccount3Activity extends AppCompatActivity {
                 con.setRequestMethod("GET");
                 con.setRequestProperty("Content-Type", "application/json");
                 con.setDoInput(true);
-                con.setDoOutput(true);
                 con.connect();
 
                 InputStream stream = con.getInputStream();
@@ -255,7 +243,7 @@ public class ISetupAccount3Activity extends AppCompatActivity {
                 num = Jres.getString("contact");
                 pw = Jres.getString("address_line_detail");
 
-                return Jres.getBoolean("result");
+                return null;
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -268,7 +256,6 @@ public class ISetupAccount3Activity extends AppCompatActivity {
             update();
         }
     }
-
 
     //서버에 변경된 데이터 send
     private class Patch extends AsyncTask<String, Void, Boolean> {
@@ -289,8 +276,17 @@ public class ISetupAccount3Activity extends AppCompatActivity {
                 con.setDoInput(true);
                 con.connect();
 
+//                com name
+//                num contact
+//                date postal_code
+//                cvc address_line_road
+//                pw address_line detail
                 JSONObject patch = new JSONObject();
-                patch.put(params[0], params[1]);
+                patch.put("name", com);
+                patch.put("address_line_road", cvc);
+                patch.put("postal_code", date);
+                patch.put("contact", num);
+                patch.put("address_line_detail", pw);
 
                 OutputStream outStream = con.getOutputStream();
                 BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outStream));
@@ -309,6 +305,11 @@ public class ISetupAccount3Activity extends AppCompatActivity {
                 con.disconnect();
                 reader.close();
                 JSONObject Jres = new JSONObject(buffer.toString());
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                Log.i("###", "change delivery at delivery activity");
+                Log.i("###", String.valueOf(Jres.getBoolean("valid")));
+                editor.putBoolean("deliveryOK", Jres.getBoolean("valid"));
+                editor.commit();
 
                 return Jres.getBoolean("valid");
 
@@ -320,16 +321,11 @@ public class ISetupAccount3Activity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(Boolean result) {
-            if (result) {
+            if ((result==null) || (result==false)) {
                 Toast.makeText(ISetupAccount3Activity.this, "필요한 정보를 모두 입력해야 주문이 가능합니다", Toast.LENGTH_SHORT).show();
             }else{
                 Toast.makeText(ISetupAccount3Activity.this, "변경사항이 모두 저장되었습니다", Toast.LENGTH_SHORT).show();
-                SharedPreferences tut = getSharedPreferences("user", MODE_PRIVATE);
-                SharedPreferences.Editor editor = tut.edit();
-                editor.putBoolean("deliveryOk", true);
-                editor.apply();
             }
-
             update();
         }
     }

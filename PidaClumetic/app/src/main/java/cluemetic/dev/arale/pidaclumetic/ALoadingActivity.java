@@ -19,6 +19,7 @@ import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -35,6 +36,8 @@ public class ALoadingActivity extends AppCompatActivity {
     ImageView logo;
     String token="";
     String refresh="";
+    String email, pw, gender, age, skintype, concern, allergy, userid;
+    String access_token, refresh_token, payment, delivery;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,6 +107,7 @@ public class ALoadingActivity extends AppCompatActivity {
         SharedPreferences getval = getSharedPreferences("user", MODE_PRIVATE);
         token = getval.getString("access_token", "");
         refresh = getval.getString("refresh_token", "");
+        email = getval.getString("username", "");
 
         //for animation, go to other activity after 2 seconds delay.
         handler.postDelayed(new Runnable() {
@@ -126,7 +130,7 @@ public class ALoadingActivity extends AppCompatActivity {
                     new RefreshToken().execute();
                 }
             }
-        }, 2000);
+        }, 1500);
 
     }
 
@@ -157,6 +161,7 @@ public class ALoadingActivity extends AppCompatActivity {
         @Override
         protected Boolean doInBackground(String... params) {
             try{
+                Log.i("###", "refresh token at Loading");
                 URL url = new URL("http://ec2-13-125-246-38.ap-northeast-2.compute.amazonaws.com/o/token/?client_id=yg30yWvkbNXIjDbA4mDLimNkyCgZpriBy6c5k8yU&client_secret=4yRNL6m1LUsHPP8ohiDLfnnPVQ8Vikh1EMGYSRhsTKzDRZoAKYZm2HZPe4Ls9HTJuTwjJddcFJmivKCVtAve5yPzmJ9M6pO5XGmh3DmARscXu4L8cRSrk8XpkoXHYFZW&grant_type=refresh_token&refresh_token="+
                     refresh + "&access_token=" + token);
                 HttpURLConnection con = (HttpURLConnection) url.openConnection();
@@ -165,6 +170,7 @@ public class ALoadingActivity extends AppCompatActivity {
                 con.setDoInput(true);
                 con.connect();
 
+                Log.i("###", "refresh token at Loading");
                 InputStream stream = con.getInputStream();
                 BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
                 StringBuffer buffer = new StringBuffer();
@@ -173,6 +179,7 @@ public class ALoadingActivity extends AppCompatActivity {
                     buffer.append(line);
                 }
 
+                Log.i("###", "refresh token at Loading");
                 con.disconnect();
                 reader.close();
                 JSONObject Jres = new JSONObject(buffer.toString());
@@ -189,15 +196,110 @@ public class ALoadingActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(Boolean result) {
+            Log.i("###", "refresh token finished at Loading");
+            new getUserData().execute();
             SharedPreferences getvall = getSharedPreferences("user", MODE_PRIVATE);
             SharedPreferences.Editor editor = getvall.edit();
             editor.putString("access_token", token);
             editor.putString("refresh_token", refresh);
             editor.apply();
 
+        }
+    }
+
+
+
+    //get user information from server
+    public class getUserData extends AsyncTask<String, Void, JSONObject> {
+
+        @Override
+        protected JSONObject doInBackground(String... params) {
+            try{
+                Log.i("###", "getUserData at Loading");
+                //make information to string
+                String strParams = "?access_token=" + token;
+
+                URL url = new URL("http://ec2-13-125-246-38.ap-northeast-2.compute.amazonaws.com/users/" + email + strParams);
+                Log.i("###", "getUserData at Loading");
+                Log.i("###", "http://ec2-13-125-246-38.ap-northeast-2.compute.amazonaws.com/users/" + email + strParams);
+                HttpURLConnection urlConn = (HttpURLConnection) url.openConnection();
+                Log.i("###", "getUserData at Loading");
+                urlConn.setRequestMethod("GET");
+                Log.i("###", "getUserData at Loading000");
+                urlConn.setDoInput(true);
+                urlConn.setRequestProperty("Accept", "application/json");
+                urlConn.setConnectTimeout(500);
+                Log.i("###", "getUserData at Loading");
+
+
+                Log.i("###", String.valueOf(urlConn.getResponseCode()) + "getUserData at Loading");
+                if (urlConn.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                    Log.i("###", "getUserData at Loading----");
+
+                    InputStream stream = urlConn.getInputStream();
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
+                    StringBuilder buffer = new StringBuilder();
+                    String line = "";
+                    while ((line = reader.readLine()) != null) {
+                        buffer.append(line);
+                    }
+                    reader.close();
+                    JSONObject JsonResult = new JSONObject(buffer.toString());
+                    urlConn.disconnect();
+
+                    Log.i("###", "getUserData at Loading");
+
+                    userid = String.valueOf(JsonResult.getInt("id"));
+                    gender = String.valueOf(JsonResult.getInt("gender"));
+                    age = String.valueOf(JsonResult.getInt("age"));
+                    skintype = String.valueOf(JsonResult.getInt("skin_type"));
+                    concern = "";
+                    JSONArray curr = JsonResult.getJSONArray("skin_concerns");
+                    for (int i = 0; i<curr.length(); i++){
+                        concern = concern + curr.getString(i);
+                    }
+                    allergy = "";
+                    curr = JsonResult.getJSONArray("allergies");
+                    for (int i = 0; i<curr.length(); i++){
+                        allergy = allergy + curr.getString(i).toUpperCase();
+                    }
+
+                    Log.i("###", "getUserData at Loading");
+                    SharedPreferences sharedPreferences = getSharedPreferences("user", MODE_PRIVATE);
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putString("skintype", skintype);
+                    editor.putString("userid", userid);
+                    editor.putString("gender", gender);
+                    editor.putString("age", age);
+                    editor.putString("concern", concern);
+                    editor.putString("allergy", allergy);
+                    editor.putString("payment", JsonResult.getString("default_payment_information"));
+                    editor.putString("delivery", JsonResult.getString("default_delivery_information"));
+                    editor.apply();
+
+                    Log.i("###", "getUserData at Loading finished");
+
+
+                    return null;
+                }
+
+                urlConn.disconnect();
+                return null;
+
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(JSONObject jsonObject) {
+            Log.i("###", "getUserData did anyway............");
             Intent alreadyLogin = new Intent(getBaseContext(), ECategoryActivity.class);
             startActivity(alreadyLogin);
             finish();
         }
     }
+
 }

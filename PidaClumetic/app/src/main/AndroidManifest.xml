@@ -49,6 +49,11 @@
         <activity android:name=".MTesterActivity" android:launchMode="singleInstance" />
         <activity android:name=".NBasketActivity" android:launchMode="singleInstance" />
         <activity android:name=".OPidaActivity" android:launchMode="singleInstance"  />
+        <activity android:name=".QPurchaseDoneActivity" />
+        <activity android:name=".ISetupNoticeActivity" />
+        <activity android:name=".RPurchaseDescriptionActivity" />
+        <activity android:name=".ISetupAccount2ReadOnlyActivity" />
+        <activity android:name=".ISetupAccount3ReadOnlyActivity" />
     </application>
 
 </manifest>

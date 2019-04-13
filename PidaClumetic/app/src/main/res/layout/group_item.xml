@@ -6,6 +6,8 @@
     android:layout_width="match_parent"
     android:layout_height="392dp"
     android:orientation="vertical"
+    android:foregroundGravity="center"
+    android:layout_gravity="center"
     android:clipToPadding="false"
     android:clipChildren="false">
 
@@ -69,7 +71,7 @@
                 android:layout_marginBottom="8dp"
                 android:paddingLeft="10dp"
                 android:paddingBottom="5dp"
-                card_view:layout_constraintBottom_toTopOf="@+id/progress">
+                card_view:layout_constraintBottom_toTopOf="@+id/date">
 
                 <TextView
                     android:id="@+id/priceT"
@@ -103,22 +105,11 @@
                 android:layout_marginBottom="8dp"
                 android:paddingLeft="10dp"
                 android:paddingBottom="5dp"
-                card_view:layout_constraintBottom_toTopOf="@+id/progress"
+                card_view:layout_constraintBottom_toTopOf="@+id/date"
                 card_view:layout_constraintStart_toEndOf="@id/price"/>
 
 
 
-            <ProgressBar
-                android:id="@+id/progress"
-                style="@android:style/Widget.ProgressBar.Horizontal"
-                android:layout_width="264dp"
-                android:layout_height="10dp"
-                android:layout_marginBottom="8dp"
-                android:progress="25"
-                card_view:layout_constraintBottom_toTopOf="@+id/date"
-                card_view:layout_constraintEnd_toEndOf="parent"
-                card_view:layout_constraintStart_toStartOf="parent"
-                android:background="@drawable/progress_bar"/>
 
             <TextView
                 android:id="@+id/date"

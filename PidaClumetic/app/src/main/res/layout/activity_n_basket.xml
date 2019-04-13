@@ -49,40 +49,34 @@
     </android.support.v7.widget.Toolbar>
 
     <View
+        android:id="@+id/vv"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="@color/lgt_gray"
         app:layout_constraintTop_toBottomOf="@id/toolbar" />
 
 
-    <ScrollView
-        android:id="@+id/scrollView3"
+    <ListView
+        android:id="@+id/listView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/tester">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-        </LinearLayout>
-    </ScrollView>
+        app:layout_constraintBottom_toTopOf="@+id/constraintLayout3"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/vv"></ListView>
 
     <android.support.constraint.ConstraintLayout
+        android:id="@+id/constraintLayout3"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:clipToPadding="false"
-        android:paddingBottom="20dp"
-        app:layout_constraintBottom_toTopOf="@+id/tester">
+        app:layout_constraintBottom_toTopOf="@+id/purchase">
 
 
         <Button
             android:id="@+id/payment"
             android:layout_width="match_parent"
             android:layout_height="48dp"
-            android:layout_margin="4dp"
-            android:layout_marginTop="12dp"
             android:background="@color/white"
             android:elevation="10dp"
             android:gravity="center_vertical"
@@ -112,8 +106,6 @@
             android:id="@+id/delivery"
             android:layout_width="match_parent"
             android:layout_height="48dp"
-            android:layout_margin="4dp"
-            android:layout_marginTop="8dp"
             android:background="@color/white"
             android:elevation="10dp"
             android:gravity="center_vertical"
@@ -144,14 +136,13 @@
 
 
     <Button
-        android:id="@+id/tester"
+        android:id="@+id/purchase"
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:text="받아보기"
+        android:text="주문하기"
         app:layout_constraintBottom_toTopOf="@id/bottomNavigationView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        android:layout_weight="1"
         android:background="@color/colorPrimary"
         android:textColor="@color/white"
         android:fontFamily="@font/notosans"

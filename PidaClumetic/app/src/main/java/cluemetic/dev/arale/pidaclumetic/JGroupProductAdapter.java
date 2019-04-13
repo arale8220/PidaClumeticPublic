@@ -48,7 +48,7 @@ public class JGroupProductAdapter extends PagerAdapter {
         View view = layoutInflater.inflate(R.layout.group_item, container, false);
 
         ImageView imageView;
-        ProgressBar progressBar;
+        //ProgressBar progressBar;
         TextView company, title, priceT, priceN, date;
 
         imageView = view.findViewById(R.id.imgURI);
@@ -58,14 +58,14 @@ public class JGroupProductAdapter extends PagerAdapter {
         priceT = view.findViewById(R.id.priceT);
         priceN = view.findViewById(R.id.priceN);
         date = view.findViewById(R.id.date);
-        progressBar = view.findViewById(R.id.progress);
+        //progressBar = view.findViewById(R.id.progress);
 
 
         title.setText(products.get(position).getTitle());
         company.setText(products.get(position).getCompany());
         priceT.setText(products.get(position).getPrice());
         priceN.setText(""); //현재 할인 중인 가격을 알 수 없음
-        progressBar.setProgress(0);//현재 주문된 개수를 알 수 없음
+        //progressBar.setProgress(0);//현재 주문된 개수를 알 수 없음
         date.setText("~" + products.get(position).getClosing_time());
 
 

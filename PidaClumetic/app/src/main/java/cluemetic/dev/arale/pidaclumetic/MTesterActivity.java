@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -19,12 +20,9 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.Arrays;
-import java.util.stream.Collectors;
 
 public class MTesterActivity extends AppCompatActivity {
 
@@ -152,10 +150,12 @@ public class MTesterActivity extends AppCompatActivity {
         purchase.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SharedPreferences tut = getSharedPreferences("user", MODE_PRIVATE);
-                String[] ids = tut.getString("testers", "").split(" ");
-                new Purchase(tut.getBoolean("paymentOk", false), tut.getBoolean("deliveryOk", false), tut.getString("access_token", ""))
-                    .execute(String.valueOf(tut.getInt("count", 0)), ids[0], ids[1], ids[2]);
+                SharedPreferences user = getSharedPreferences("user", MODE_PRIVATE);
+                new Purchase(
+                        user.getBoolean("paymentOK", false),
+                        user.getBoolean("deliveryOK", false),
+                        user.getString("access_token", ""))
+                        .execute();
             }
         });
 
@@ -183,43 +183,66 @@ public class MTesterActivity extends AppCompatActivity {
         @Override
         protected Boolean doInBackground(String... params) {
             try{
-                if ((Integer.valueOf(params[0])>=3) && pay && del){
+                Log.i("###", "tester ordering");
+                SharedPreferences testers = getSharedPreferences("tester", MODE_PRIVATE);
+                Integer count = testers.getInt("count", 0);
+                Log.i("###", "tester ordering");
+
+                Log.i("###", testers.getString("products", "[]"));
+                JSONArray testersUrls = new JSONArray(testers.getString("products", "[]"));
+                String url1 = testersUrls.getJSONObject(0).getString("url");
+                String url2 = testersUrls.getJSONObject(1).getString("url");
+                String url3 = testersUrls.getJSONObject(2).getString("url");
+
+                Log.i("###", "tester ordering===");
+                Log.i("###", String.valueOf((count>=3)));
+                Log.i("###", String.valueOf(pay));
+                Log.i("###", String.valueOf(del));
+                Log.i("###", "http://ec2-13-125-246-38.ap-northeast-2.compute.amazonaws.com/tester-orders/?access_token="+token);
+                if ((count>=3) && pay && del){
                     URL url = new URL("http://ec2-13-125-246-38.ap-northeast-2.compute.amazonaws.com/tester-orders/?access_token="+token);
                     HttpURLConnection con = (HttpURLConnection) url.openConnection();
                     con.setRequestMethod("POST");
-                    con.setRequestProperty("Content-Type", "application/json");
+                    con.setRequestProperty("Accept", "application/json");
+                    con.setRequestProperty("Content-type", "application/json");
                     con.setDoOutput(true);
                     con.setDoInput(true);
                     con.connect();
 
+                    Log.i("###", "tester ordering----");
                     JSONArray products = new JSONArray();
-                    products.put("http://ec2-13-125-246-38.ap-northeast-2.compute.amazonaws.com/products/" + params[1] + "/");
-                    products.put("http://ec2-13-125-246-38.ap-northeast-2.compute.amazonaws.com/products/" + params[2] + "/");
-                    products.put("http://ec2-13-125-246-38.ap-northeast-2.compute.amazonaws.com/products/" + params[3] + "/");
+                    products.put(url1);
+                    products.put(url2);
+                    products.put(url3);
 
-                    SharedPreferences tut = getSharedPreferences("user", MODE_PRIVATE);
+                    Log.i("###", "tester ordering");
+                    SharedPreferences user = getSharedPreferences("user", MODE_PRIVATE);
                     JSONObject post = new JSONObject();
                     post.put("products", products);
                     post.put("category", "http://ec2-13-125-246-38.ap-northeast-2.compute.amazonaws.com/categories/1/");
-                    post.put("delivery_information", tut.getString("delivery", ""));
-                    post.put("payment_information", tut.getString("payment", ""));
+                    post.put("delivery_information", user.getString("delivery", ""));
+                    post.put("payment_information", user.getString("payment", ""));
+
+                    Log.i("###", "tester ordering");
+                    Log.i("###", post.toString());
 
                     OutputStreamWriter os= new OutputStreamWriter(con.getOutputStream());
                     os.write( post.toString() );
                     os.flush();
 
 
-                    if (con.getResponseCode() == HttpURLConnection.HTTP_OK) {
-                        SharedPreferences tut2 = getSharedPreferences("tester", MODE_PRIVATE);
-                        SharedPreferences.Editor ed = tut2.edit();
+                    Log.i("###", "tester ordering---" + String.valueOf(con.getResponseCode()));
+                    if (con.getResponseCode() == HttpURLConnection.HTTP_CREATED) {
+                        SharedPreferences.Editor ed = testers.edit();
                         ed.putInt("count", 0);
-                        ed.putString("testers", "");
+                        ed.putString("products", "[]");
                         ed.apply();
                         return true;
                     }
 
 
                 }
+                else return false;
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -229,8 +252,14 @@ public class MTesterActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(Boolean aBoolean) {
-            if (aBoolean) Toast.makeText(MTesterActivity.this, "테스터 주문에 성공하였습니다. My피다에서 확인해주세요", Toast.LENGTH_SHORT).show();
-            else Toast.makeText(MTesterActivity.this, "테스터 주문에 실패하였습니다. 서로 다른 테스터들과 옳은 배송/결제정보를 입력해주세요", Toast.LENGTH_SHORT).show();
+            if (aBoolean) {
+                Intent i = new Intent(getBaseContext(), QPurchaseDoneActivity.class);
+                i.putExtra("type", 0);
+                i.putExtra("url", "");
+                startActivity(i);
+                finish();
+            }
+            else Toast.makeText(MTesterActivity.this, "테스터 주문에 실패하였습니다. 테스터/배송/결제정보를 확인해주세요", Toast.LENGTH_SHORT).show();
         }
     }
 

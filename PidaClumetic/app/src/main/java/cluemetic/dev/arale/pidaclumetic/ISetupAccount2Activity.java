@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -68,6 +69,7 @@ public class ISetupAccount2Activity extends AppCompatActivity {
         sharedPreferences = getSharedPreferences("user", MODE_PRIVATE);
         json_url = sharedPreferences.getString("payment","");
         access_token = sharedPreferences.getString("access_token", "");
+        Log.i("###", "pay1");
         new Connection().execute();
 
 
@@ -147,11 +149,7 @@ public class ISetupAccount2Activity extends AppCompatActivity {
                                     //변경한 성별이 선택된 경우 toast로 알림
                                     int index = (int) SelectedGenderItems.get(0);
                                     com = ListItems.get(index);
-                                    //서버로 성별 변경 알림
-                                    Patch connection = new Patch();
-                                    connection.execute("issuer", com);
-                                    //페이지에 요소 업데이트
-                                    update();
+                                    new Patch().execute();
                                 }else {
                                     Toast.makeText(getApplicationContext(),"카드사를 선택하지 않아 값이 변경되지 않았습니다." , Toast.LENGTH_LONG).show();
                                 }
@@ -172,7 +170,7 @@ public class ISetupAccount2Activity extends AppCompatActivity {
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                                 num = et.getText().toString();
-                                new Patch().execute("card_number", num);
+                                new Patch().execute();
                             }
                         });
                 builder1.show();
@@ -189,7 +187,7 @@ public class ISetupAccount2Activity extends AppCompatActivity {
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                                 date = et2.getText().toString();
-                                new Patch().execute("expiration_date", date);
+                                new Patch().execute();
                             }
                         });
                 builder2.show();
@@ -206,7 +204,7 @@ public class ISetupAccount2Activity extends AppCompatActivity {
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                                 cvc = et3.getText().toString();
-                                new Patch().execute("cvc", cvc);
+                                new Patch().execute();
                             }
                         });
                 builder3.show();
@@ -223,7 +221,7 @@ public class ISetupAccount2Activity extends AppCompatActivity {
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                                 pw = et4.getText().toString();
-                                new Patch().execute("password_hashed", pw);
+                                new Patch().execute();
                             }
                         });
                 builder4.show();
@@ -245,7 +243,7 @@ public class ISetupAccount2Activity extends AppCompatActivity {
     }
 
 
-    //서버 데이터 받
+    //서버 데이터 받기
     private class Connection extends AsyncTask<String, Void, Boolean> {
         @Override
         protected void onPreExecute() { }
@@ -255,17 +253,21 @@ public class ISetupAccount2Activity extends AppCompatActivity {
         protected Boolean doInBackground(String... params) {
             try{
 
+                Log.i("###", "pay1");
                 String strParams = "access_token=" + access_token;
 
+                Log.i("###", json_url+"?"+strParams);
                 URL url = new URL(json_url+"?"+strParams);
+                Log.i("###", "pay1");
                 HttpURLConnection con = (HttpURLConnection) url.openConnection();
                 con.setRequestMethod("GET");
                 con.setRequestProperty("Content-Type", "application/json");
                 con.setDoInput(true);
-                con.setDoOutput(true);
                 con.connect();
 
+                Log.i("###", "pay2");
                 InputStream stream = con.getInputStream();
+                Log.i("###", "pay22");
                 BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
                 StringBuffer buffer = new StringBuffer();
                 String line = "";
@@ -275,12 +277,16 @@ public class ISetupAccount2Activity extends AppCompatActivity {
 
                 con.disconnect();
                 reader.close();
+                Log.i("###", "pay3");
+
                 JSONObject Jres = new JSONObject(buffer.toString());
                 com = Jres.getString("issuer");
                 cvc = Jres.getString("cvc");
                 date = Jres.getString("expiration_date");
                 num = Jres.getString("card_number");
                 pw = Jres.getString("password_hashed");
+
+                Log.i("###", "pay4");
 
                 return Jres.getBoolean("result");
 
@@ -318,7 +324,11 @@ public class ISetupAccount2Activity extends AppCompatActivity {
                 con.connect();
 
                 JSONObject patch = new JSONObject();
-                patch.put(params[0], params[1]);
+                patch.put("issuer", com);
+                patch.put("cvc", cvc);
+                patch.put("expiration_date", date);
+                patch.put("card_number", num);
+                patch.put("password_hashed", pw);
 
                 OutputStream outStream = con.getOutputStream();
                 BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outStream));
@@ -337,6 +347,11 @@ public class ISetupAccount2Activity extends AppCompatActivity {
                 con.disconnect();
                 reader.close();
                 JSONObject Jres = new JSONObject(buffer.toString());
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                Log.i("###", "change payment at payment activity");
+                Log.i("###", String.valueOf(Jres.getBoolean("valid")));
+                editor.putBoolean("paymentOK", Jres.getBoolean("valid"));
+                editor.commit();
 
                 return Jres.getBoolean("valid");
 
@@ -348,17 +363,11 @@ public class ISetupAccount2Activity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(Boolean result) {
-            if (result) {
+            if ((result==null) || (result==false)) {
                 Toast.makeText(ISetupAccount2Activity.this, "필요한 정보를 모두 입력해야 주문이 가능합니다", Toast.LENGTH_SHORT).show();
             }else{
                 Toast.makeText(ISetupAccount2Activity.this, "변경사항이 모두 저장되었습니다", Toast.LENGTH_SHORT).show();
-                SharedPreferences tut = getSharedPreferences("user", MODE_PRIVATE);
-                SharedPreferences.Editor editor = tut.edit();
-                editor.putBoolean("paymentOk", true);
-                editor.apply();
-
             }
-
             update();
         }
     }

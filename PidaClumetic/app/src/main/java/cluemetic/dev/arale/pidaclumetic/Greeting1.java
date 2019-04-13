@@ -53,7 +53,7 @@ public class Greeting1 extends Fragment {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 ebtn.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorPrimary)));
             }
-            ebtn.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+            //ebtn.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
         }else {
             etext.setText("이미 가입된 이메일입니다");
             ebtn.setBackgroundResource(R.drawable.ic_cancel);
@@ -84,13 +84,13 @@ public class Greeting1 extends Fragment {
             pctext.setText("확인되었습니다");
             pcbtn.setBackgroundResource(R.drawable.ic_check_circle);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                pbtn.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorPrimary)));
+                pcbtn.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorPrimary)));
             }
         }else {
             pctext.setText("비밀번호를 다시 확인해주세요");
             pcbtn.setBackgroundResource(R.drawable.ic_cancel);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                pbtn.setBackgroundTintList( ColorStateList.valueOf( getResources().getColor(R.color.lgt_gray )) );
+                pcbtn.setBackgroundTintList( ColorStateList.valueOf( getResources().getColor(R.color.lgt_gray )) );
             }
         }
     }

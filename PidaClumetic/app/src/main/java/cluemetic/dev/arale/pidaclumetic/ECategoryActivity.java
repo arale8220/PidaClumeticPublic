@@ -2,6 +2,7 @@ package cluemetic.dev.arale.pidaclumetic;
 
 import android.Manifest;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -49,6 +50,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -113,13 +115,13 @@ public class ECategoryActivity extends AppCompatActivity {
             navigationView.postDelayed(() -> {
                 int itemId = menuItem.getItemId();
                 if (itemId == R.id.navigation_category) {
-                    startActivity(new Intent(getBaseContext(), ECategoryActivity.class));
-            } else if (itemId == R.id.navigation_basket) {
-                startActivity(new Intent(this, NBasketActivity.class));
+                    return;
+                } else if (itemId == R.id.navigation_basket) {
+                    startActivity(new Intent(this, NBasketActivity.class));
                 } else if (itemId == R.id.navigation_group) {
                     startActivity(new Intent(getBaseContext(), JGroupActivity.class));
-            } else if (itemId == R.id.navigation_mypida) {
-                startActivity(new Intent(this, OPidaActivity.class));
+                } else if (itemId == R.id.navigation_mypida) {
+                    startActivity(new Intent(this, OPidaActivity.class));
                 } else if (itemId == R.id.navigation_information) {
                     startActivity(new Intent(getBaseContext(), ISetupActivity.class));
                 }
@@ -133,6 +135,10 @@ public class ECategoryActivity extends AppCompatActivity {
         MenuItem menuItem = menu.getItem(0);
         menuItem.setChecked(true);
 
+        //항상 결제/배송정보의 타당성 확인
+        SharedPreferences userData = getSharedPreferences("user", MODE_PRIVATE);
+        new getPayDeliveryData(userData.getString("delivery", ""), "deliveryOK").execute();
+        new getPayDeliveryData(userData.getString("payment", ""), "paymentOK").execute();
 
 
         //누른 버튼에 따라 서브카테고리 액티비티에 나타낼 정보 달라짐
@@ -157,6 +163,61 @@ public class ECategoryActivity extends AppCompatActivity {
         creamRecovery.setOnClickListener(onClickListener) ;
     }
 
+
+    //get user information from server
+    public class getPayDeliveryData extends AsyncTask<String, Void, JSONObject> {
+        String geturl, spOK;
+
+        public getPayDeliveryData(String url, String spOK) {
+            this.geturl = geturl;
+            this.spOK = spOK;
+        }
+
+        @Override
+        protected JSONObject doInBackground(String... params) {
+            try{
+                SharedPreferences user = getSharedPreferences("user", MODE_PRIVATE);
+                String access_token = user.getString("access_token", "");
+
+
+                //make information to string
+                String strParams = "?access_token=" + access_token;
+
+                URL url = new URL(geturl + strParams);
+                HttpURLConnection urlConn = (HttpURLConnection) url.openConnection();
+                urlConn.setRequestMethod("GET");
+                urlConn.setRequestProperty("Content-Type", "application/json");
+                urlConn.setDoInput(true);
+
+                if (urlConn.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                    InputStream stream = urlConn.getInputStream();
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
+                    StringBuilder buffer = new StringBuilder();
+                    String line = "";
+                    while ((line = reader.readLine()) != null) {
+                        buffer.append(line);
+                    }
+                    reader.close();
+                    JSONObject JsonResult = new JSONObject(buffer.toString());
+                    urlConn.disconnect();
+
+                    SharedPreferences.Editor editor = user.edit();
+                    editor.putBoolean(spOK, JsonResult.getBoolean("valid"));
+                    editor.apply();
+
+                    return JsonResult;
+                }
+
+                urlConn.disconnect();
+                return null;
+
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+    }
 
     private class CategoryConnection extends AsyncTask<Integer, Void, Boolean> {
         @Override

@@ -64,20 +64,77 @@ public class HProductActivity extends AppCompatActivity {
         intent = getIntent();
         id = intent.getStringExtra("id");
 
-        //get bitmap image from img and set mimg
-        img = intent.getStringExtra("image");
+        new ProductCreate().execute();
+
+    }
+
+
+    class ProductCreate extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+
+
+            try{
+                URL url = new URL("http://ec2-13-125-246-38.ap-northeast-2.compute.amazonaws.com/products/"+id);
+                HttpURLConnection urlConn = (HttpURLConnection) url.openConnection();
+                urlConn.setRequestMethod("GET");
+                urlConn.setDoInput(true);
+
+                if (urlConn.getResponseCode() == HttpURLConnection.HTTP_OK) {
+
+                    InputStream stream = urlConn.getInputStream();
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
+                    StringBuilder buffer = new StringBuilder();
+                    String line = "";
+                    while ((line = reader.readLine()) != null) {
+                        buffer.append(line);
+                    }
+                    reader.close();
+                    JSONObject JsonResult = new JSONObject(buffer.toString());
+                    urlConn.disconnect();
+
+                    com = JsonResult.getJSONObject("brand").getString("name");
+                    tit = JsonResult.getString("name");
+                    pri = String.valueOf(JsonResult.getInt("price"));
+                    sell = JsonResult.getString("info_seller");
+                    manu = JsonResult.getString("info_manufacturer");
+                    coun = JsonResult.getString("info_country");
+                    inf = JsonResult.getString("info_url");
+                    String[] tokens = JsonResult.getString("category").split("/");
+                    Log.i("###", "~~~~~"+tokens.toString());
+                    String lastToken = tokens[tokens.length-1];
+                    Log.i("###", lastToken + "$$$$$$$$$$$$$$$$$$$");
+                    subCount = lastToken;
+                    img = JsonResult.getString("image");
+
+                    return null;
+                }
+
+                urlConn.disconnect();
+                return null;
+
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            DoOnCreate();
+        }
+    }
+
+
+
+
+    void DoOnCreate(){
+
         mimg = findViewById(R.id.img);
         new ShowImageConnection().execute(img);
 
-        //set views
-        com = intent.getStringExtra("brand");
-        tit = intent.getStringExtra("title");
-        pri = intent.getStringExtra("price");
-        sell = intent.getStringExtra("info_seller");
-        manu = intent.getStringExtra("info_manufacturer");
-        coun = intent.getStringExtra("info_country");
-        inf = intent.getStringExtra("info_url");
-        subCount = intent.getStringExtra("subCount");
 
         mtitle = findViewById(R.id.title);
         mcompany = findViewById(R.id.company);
@@ -105,7 +162,7 @@ public class HProductActivity extends AppCompatActivity {
                 SharedPreferences pref = getSharedPreferences("tester", MODE_PRIVATE);
                 Integer tester_count = pref.getInt("count", 0);
 
-                if (subCount.equals("1")) {
+                if ("4321".contains(subCount)) {
                     if (tester_count>2) show(1);
                     else show(0);
                 }else show(2);
@@ -124,7 +181,6 @@ public class HProductActivity extends AppCompatActivity {
         mingredient = findViewById(R.id.Ingredient);
         mreview = findViewById(R.id.review);
         new IngredientConnection().execute();
-
     }
 
 
@@ -328,29 +384,32 @@ public class HProductActivity extends AppCompatActivity {
         }
     }
 
-    void addP (){
-        try {
-            SharedPreferences pref = getSharedPreferences("tester", MODE_PRIVATE);
-            Integer tester_count = pref.getInt("count",0);
-            JSONArray products = new JSONArray(pref.getString("products", "[]"));
+    void addP (boolean temp){
+        if (temp){
+            try {
+                SharedPreferences pref = getSharedPreferences("tester", MODE_PRIVATE);
+                Integer tester_count = pref.getInt("count",0);
+                JSONArray products = new JSONArray(pref.getString("products", "[]"));
 
-            SharedPreferences.Editor editor = pref.edit();
-            JSONObject newP = new JSONObject();
+                SharedPreferences.Editor editor = pref.edit();
+                JSONObject newP = new JSONObject();
 
-            newP.put("name", tit);
-            newP.put("url", json_url+id+"/");
-            products.put(newP);
+                newP.put("name", tit);
+                newP.put("url", json_url+id+"/");
+                products.put(newP);
 
-            editor.putInt("count", tester_count + 1);
-            editor.putString("products", products.toString());
-            editor.apply();
-            Log.i("###", String.valueOf(tester_count+1));
-            Log.i("###", products.toString());
+                editor.putInt("count", tester_count + 1);
+                editor.putString("products", products.toString());
+                editor.commit();
+                Log.i("###", String.valueOf(tester_count+1));
+                Log.i("###", products.toString());
 
 
-        } catch (JSONException e) {
-        e.printStackTrace();
-    }
+            } catch (JSONException e) {
+            e.printStackTrace();
+            }
+
+        }
     }
 
 
@@ -377,20 +436,22 @@ public class HProductActivity extends AppCompatActivity {
                     builder0.show();
                     break;
                 }else{
+                    boolean temp = true;
                     for (int i=0 ; i<tester_count ; i++){
                         try {
                             if (tit.equals(products.getJSONObject(i).getString("name"))){
-                                builder0.setMessage("이미 테스터로 추가된 상품입니다.");
-                                builder0.setPositiveButton("확인",(dialog, which) -> {});
-                                builder0.show();
-                                break;
+                                temp = false;
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
                     }
-                    builder0.setMessage("해당 제품이 테스터에 추가됩니다.");
-                    builder0.setPositiveButton("확인", (dialog, which) -> { addP(); });
+                    String tempstr;
+                    if (temp) tempstr = "해당 제품이 테스터에 추가됩니다.";
+                    else tempstr = "이미 테스터로 추가된 상품입니다.";
+                    builder0.setMessage(tempstr);
+                    boolean finalTemp = temp;
+                    builder0.setPositiveButton("확인",(dialog, which) -> {addP(finalTemp);});
                     builder0.show();
                     break;
                 }
@@ -428,7 +489,7 @@ public class HProductActivity extends AppCompatActivity {
                 AlertDialog.Builder builder3 = new AlertDialog.Builder(this);
                 builder3.setTitle("장바구니");
                 builder3.setMessage("장바구니에 추가할 상품의 개수를 고르고, 확인을 눌러주세요. 취소를 누를 경우 추가되지 않습니다.");
-                final int[] num = {0};
+                final int[] num = {1};
 
                 NumberPicker np = new NumberPicker(this);
                 np.setMaxValue(10);
@@ -461,10 +522,11 @@ public class HProductActivity extends AppCompatActivity {
                                         newJ.put("id", id);
                                         newJ.put("price", pri);
                                         newJ.put("quantity", num[0]);
+                                        newJ.put("name", tit);
                                         newProducts.put(newJ);
                                         editor.putString("products", newProducts.toString());
                                         editor.putInt("count",1);
-                                        editor.apply();
+                                        editor.commit();
                                     }
 
                                     else{
@@ -485,10 +547,11 @@ public class HProductActivity extends AppCompatActivity {
                                                 newJ.put("id", id);
                                                 newJ.put("price", pri);
                                                 newJ.put("quantity", num[0]);
+                                                newJ.put("name", tit);
                                                 newProducts.put(newJ);
                                                 editor.putString("products", newProducts.toString());
                                                 editor.putInt("count", orderN+1);
-                                                editor.apply();
+                                                editor.commit();
                                             }
                                         }
                                     }

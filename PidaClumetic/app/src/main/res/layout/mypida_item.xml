@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="392dp"
+    android:layout_height="wrap_content"
     android:orientation="vertical"
     android:clipToPadding="false"
     android:clipChildren="false">
@@ -18,13 +18,15 @@
         android:foregroundGravity="center"
         android:layout_gravity="center"
         card_view:cardCornerRadius="4dp"
+        android:layout_margin="10dp"
         android:clipToPadding="false"
         android:clipChildren="false">
 
         <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:clipToPadding="false">
+            android:layout_height="wrap_content"
+            android:clipToPadding="false"
+            android:clipChildren="false">
 
             <TextView
                 android:id="@+id/date"
@@ -34,7 +36,7 @@
                 android:text="3월 19일"
                 android:textColor="#9000"
                 android:maxLines="1"
-                android:textSize="16sp"
+                android:textSize="20sp"
                 android:textStyle="bold"
                 android:layout_margin="15dp"
                 card_view:layout_constraintTop_toTopOf="parent"/>
@@ -45,10 +47,40 @@
                 android:layout_height="216dp"
                 android:layout_gravity="center"
                 android:layout_marginBottom="8dp"
+                android:layout_marginTop="20dp"
                 android:scaleType="centerCrop"
                 card_view:layout_constraintEnd_toEndOf="parent"
                 card_view:layout_constraintStart_toStartOf="parent"
                 card_view:layout_constraintTop_toBottomOf="@id/date" />
+
+
+            <ImageButton
+                android:id="@+id/imageButton"
+                android:layout_width="216dp"
+                android:layout_height="216dp"
+                android:layout_gravity="center"
+                android:layout_marginBottom="8dp"
+                android:scaleType="centerCrop"
+                android:clipToPadding="false"
+                android:clipChildren="false"
+                android:layout_marginTop="20dp"
+                card_view:layout_constraintEnd_toEndOf="parent"
+                card_view:layout_constraintStart_toStartOf="parent"
+                card_view:layout_constraintTop_toBottomOf="@id/date"
+                android:background="@drawable/btn_mypida"/>
+
+            <TextView
+                android:id="@+id/number"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:maxLines="1"
+                android:text="+3"
+                android:textColor="#9000"
+                android:textSize="22sp"
+                android:textStyle="bold"
+                card_view:layout_constraintBottom_toBottomOf="@+id/imgURI"
+                card_view:layout_constraintEnd_toEndOf="@+id/imgURI" />
 
 
 
@@ -58,16 +90,63 @@
                 android:layout_width="264dp"
                 android:layout_height="10dp"
                 android:layout_margin="20dp"
-                android:progress="25"
+                android:progress="50"
                 card_view:layout_constraintTop_toBottomOf="@id/imgURI"
                 card_view:layout_constraintEnd_toEndOf="parent"
                 card_view:layout_constraintStart_toStartOf="parent"
-                android:background="@drawable/progress_bar"/>
+                android:background="@drawable/progress_bar"
+                android:progressBackgroundTint="@color/lgt_gray"
+                android:progressTint="@color/colorPrimary"/>
+
+            <LinearLayout
+                android:id="@+id/linearLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:layout_marginTop="5dp"
+                card_view:layout_constraintTop_toBottomOf="@+id/progress">
+
+                <TextView
+                    android:id="@+id/status1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:maxLines="1"
+                    android:text="배송준비중"
+                    android:textColor="#9000"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/status2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:maxLines="1"
+                    android:text="배송중"
+                    android:textColor="#9000"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/status3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:maxLines="1"
+                    android:text="배송완료"
+                    android:textColor="#9000"
+                    android:textSize="14sp" />
+
+            </LinearLayout>
+
 
             <View
+                android:id="@+id/view2"
                 android:layout_width="match_parent"
                 android:layout_height="20dp"
-                card_view:layout_constraintTop_toBottomOf="@id/progress"/>
+                card_view:layout_constraintTop_toBottomOf="@+id/linearLayout" />
 
         </android.support.constraint.ConstraintLayout>
 

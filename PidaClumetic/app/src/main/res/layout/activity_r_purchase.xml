@@ -1,0 +1,314 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clipToPadding="false"
+    android:clipChildren="false">
+
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/constraintLayout3"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="50dp" />
+
+
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clipToPadding="false"
+                android:clipChildren="false">
+
+
+                <ImageView
+                    android:id="@+id/imgURI"
+                    android:layout_width="216dp"
+                    android:layout_height="216dp"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginTop="20dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+
+                <ImageButton
+                    android:id="@+id/imageButton"
+                    android:layout_width="216dp"
+                    android:layout_height="216dp"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginTop="20dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:clipToPadding="false"
+                    android:clipChildren="false"
+                    android:background="@drawable/btn_mypida"/>
+
+                <ProgressBar
+                    android:id="@+id/progress"
+                    style="@android:style/Widget.ProgressBar.Horizontal"
+                    android:layout_width="264dp"
+                    android:layout_height="10dp"
+                    android:layout_marginTop="50dp"
+                    android:progress="50"
+                    app:layout_constraintTop_toBottomOf="@id/imgURI"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:background="@drawable/progress_bar"
+                    android:progressBackgroundTint="@color/lgt_gray"
+                    android:progressTint="@color/colorPrimary"/>
+
+                <LinearLayout
+                    android:id="@+id/linearLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="5dp"
+                    app:layout_constraintTop_toBottomOf="@+id/progress">
+
+                    <TextView
+                        android:id="@+id/status1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:maxLines="1"
+                        android:text="배송준비중"
+                        android:textColor="#9000"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:id="@+id/status2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:maxLines="1"
+                        android:text="배송중"
+                        android:textColor="#9000"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:id="@+id/status3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:maxLines="1"
+                        android:text="배송완료"
+                        android:textColor="#9000"
+                        android:textSize="14sp" />
+
+                </LinearLayout>
+
+
+                <View
+                    android:id="@+id/view2"
+                    android:layout_width="match_parent"
+                    android:layout_height="10dp"
+                    app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
+
+            </android.support.constraint.ConstraintLayout>
+
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingLeft="16dp"
+                android:paddingTop="10dp"
+                android:paddingRight="16dp"
+                android:paddingBottom="10dp">
+
+                <TextView
+                    android:id="@+id/textView1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="주문 정보"
+                    android:textColor="#de000000"
+                    android:textSize="16sp"
+                    app:fontFamily="@font/notosans" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="10dp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:weightSum="3.5">
+
+                    <TextView
+                        android:id="@+id/textView"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="신청 일시"
+                        android:textColor="#de000000"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        app:fontFamily="@font/notosans" />
+
+                    <TextView
+                        android:id="@+id/inform1"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2.5"
+                        android:text="TextView"
+                        android:textColor="@color/drk_gray"
+                        android:textSize="14sp" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="5dp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:weightSum="3.5">
+
+                    <TextView
+                        android:id="@+id/textView2"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="전체 가격"
+                        android:textColor="#de000000"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        app:fontFamily="@font/notosans" />
+
+                    <TextView
+                        android:id="@+id/inform2"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2.5"
+                        android:text="TextView"
+                        android:textColor="@color/drk_gray"
+                        android:textSize="14sp" />
+                </LinearLayout>
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingLeft="16dp"
+                android:paddingTop="10dp"
+                android:paddingRight="16dp"
+                android:paddingBottom="10dp">
+
+                <TextView
+                    android:id="@+id/text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="상품 정보"
+                    android:textColor="#de000000"
+                    android:textSize="16sp"
+                    app:fontFamily="@font/notosans" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="10dp" />
+
+                <ListView
+                    android:id="@+id/list"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+
+            </LinearLayout>
+
+
+
+        </LinearLayout>
+    </ScrollView>
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/constraintLayout3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clipToPadding="false"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:background="#efefef">
+
+
+        <Button
+            android:id="@+id/payment"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:background="@color/white"
+            android:elevation="10dp"
+            android:gravity="center_vertical"
+            android:paddingStart="14dp"
+            android:paddingLeft="14dp"
+            android:text="결제 정보 확인"
+            android:textColor="@color/drk_gray"
+            android:textSize="16sp"
+            app:fontFamily="@font/notosans" />
+
+        <ImageView
+            android:id="@+id/imageView4"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginRight="10dp"
+            android:elevation="11dp"
+            android:tint="@color/drk_gray"
+            app:layout_constraintBottom_toBottomOf="@+id/payment"
+            app:layout_constraintRight_toRightOf="@+id/payment"
+            app:layout_constraintTop_toTopOf="@+id/payment"
+            app:srcCompat="@drawable/ic_rightarrow"
+            tools:ignore="VectorDrawableCompat" />
+
+        <Button
+            android:id="@+id/delivery"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:background="@color/white"
+            android:elevation="10dp"
+            android:gravity="center_vertical"
+            android:paddingStart="14dp"
+            android:paddingLeft="14dp"
+            android:text="배송 정보 확인"
+            android:textColor="@color/drk_gray"
+            android:textSize="16sp"
+            app:fontFamily="@font/notosans"
+            app:layout_constraintTop_toBottomOf="@+id/payment" />
+
+        <ImageView
+            android:id="@+id/imageView5"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginRight="10dp"
+            android:elevation="11dp"
+            android:tint="@color/drk_gray"
+            app:layout_constraintBottom_toBottomOf="@+id/delivery"
+            app:layout_constraintRight_toRightOf="@+id/delivery"
+            app:layout_constraintTop_toTopOf="@+id/delivery"
+            app:srcCompat="@drawable/ic_rightarrow"
+            tools:ignore="VectorDrawableCompat" />
+
+
+    </android.support.constraint.ConstraintLayout>
+
+
+
+
+</android.support.constraint.ConstraintLayout>

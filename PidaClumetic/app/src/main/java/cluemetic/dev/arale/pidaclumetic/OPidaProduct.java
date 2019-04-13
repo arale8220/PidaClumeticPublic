@@ -1,12 +1,13 @@
 package cluemetic.dev.arale.pidaclumetic;
 
 public class OPidaProduct {
-    Integer type, state;
-    String imgUri, time, number;
+    Integer type, state; //type 0 tester 1 normal 2 group // state 0 준비중 1 배송중 2 완료
+    String orderUri, imgUri, time, number;
 
-    public OPidaProduct(Integer type, Integer state, String imgUri, String time, String number) {
+    public OPidaProduct(Integer type, Integer state, String orderUri, String imgUri, String time, String number) {
         this.type = type;
         this.state = state;
+        this.orderUri = orderUri;
         this.imgUri = imgUri;
         this.time = time;
         this.number = number;
@@ -26,6 +27,14 @@ public class OPidaProduct {
 
     public void setState(Integer state) {
         this.state = state;
+    }
+
+    public String getOrderUri() {
+        return orderUri;
+    }
+
+    public void setOrderUri(String orderUri) {
+        this.orderUri = orderUri;
     }
 
     public String getImgUri() {
