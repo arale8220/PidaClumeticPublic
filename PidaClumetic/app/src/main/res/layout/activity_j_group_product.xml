@@ -96,7 +96,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:maxLines="1"
-                        android:text="20000원"
+                        android:text="현재 몇개 구매중"
                         android:textColor="#9000"
                         android:textSize="14sp"
                         android:textStyle="bold"
@@ -127,7 +127,7 @@
                     android:id="@+id/sale0"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="할인"
+                    android:text="공동구매 추가 할인"
                     android:textColor="#de000000"
                     android:textSize="16sp"
                     app:fontFamily="@font/notosans" />
@@ -357,6 +357,66 @@
             </LinearLayout>
 
 
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/lgt_gray"
+                android:id="@+id/discountView"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/discountLayout"
+                android:orientation="vertical"
+                android:paddingLeft="16dp"
+                android:paddingTop="10dp"
+                android:paddingRight="16dp"
+                android:paddingBottom="10dp">
+
+                <TextView
+                    android:id="@+id/textView2222"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="할인 정보"
+                    android:textColor="#de000000"
+                    android:textSize="16sp"
+                    app:fontFamily="@font/notosans" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="5dp" />
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:weightSum="3.5">
+
+                    <TextView
+                        android:id="@+id/textView222"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="런칭기념 할인"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        app:fontFamily="@font/notosans" />
+
+                    <TextView
+                        android:id="@+id/inform222"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2.5"
+                        android:text="0원 할인 자동적용"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="14sp" />
+                </LinearLayout>
+
+            </LinearLayout>
+
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
@@ -376,29 +436,15 @@
                     android:layout_height="match_parent"
                     android:orientation="horizontal">
 
-                    <android.support.constraint.ConstraintLayout
+                    <TextView
+                        android:id="@+id/textView11"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
+                        android:layout_height="wrap_content"
+                        android:text="성분"
+                        android:textColor="#de000000"
+                        android:textSize="16sp"
+                        app:fontFamily="@font/notosans" />
 
-                        <TextView
-                            android:id="@+id/textView11"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="성분"
-                            android:textColor="#de000000"
-                            android:textSize="16sp"
-                            app:fontFamily="@font/notosans" />
-
-                        <!--ImageView
-                            android:id="@+id/imageView11"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:rotation="90"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:srcCompat="@drawable/ic_rightarrow"
-                            tools:ignore="VectorDrawableCompat" /-->
-
-                    </android.support.constraint.ConstraintLayout>
                 </LinearLayout>
 
                 <ListView

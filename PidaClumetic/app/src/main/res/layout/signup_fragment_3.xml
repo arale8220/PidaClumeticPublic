@@ -321,5 +321,62 @@
             </TableRow>
         </TableLayout>
 
+
+        <TextView
+            android:id="@+id/agreementtext"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:paddingLeft="10dp"
+            android:text="이용약관"
+            android:textColor="#de000000"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:fontFamily="@font/notosans"
+            app:layout_constraintStart_toStartOf="@+id/table3"
+            app:layout_constraintTop_toBottomOf="@id/table3" />
+        <TextView
+            android:id="@+id/agreementtext2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:paddingLeft="4dp"
+            android:text="  클릭시 이용약관 페이지로 이동"
+            android:textColor="#de000000"
+            android:textSize="14sp"
+            app:fontFamily="@font/notosans"
+            app:layout_constraintStart_toEndOf="@+id/agreementtext"
+            app:layout_constraintBottom_toBottomOf="@id/agreementtext" />
+
+        <TableLayout
+            android:id="@+id/table4"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="32dp"
+            android:layout_marginRight="32dp"
+            android:stretchColumns="0,1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/agreementtext"
+            app:layout_constraintTop_toBottomOf="@+id/agreementtext">
+
+            <TableRow
+                android:layout_width="0dp"
+                android:layout_height="match_parent">
+
+                <CheckBox
+                    android:id="@+id/agreement"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:text="이용약관 및 개인정보 취급 방침에 동의합니다" />
+
+            </TableRow>
+
+        </TableLayout>
+
+
+
+
     </android.support.constraint.ConstraintLayout>
 </android.support.constraint.ConstraintLayout>

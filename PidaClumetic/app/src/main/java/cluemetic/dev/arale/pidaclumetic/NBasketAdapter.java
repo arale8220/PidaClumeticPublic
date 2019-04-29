@@ -56,7 +56,7 @@ public class NBasketAdapter extends BaseAdapter {
         new DownloadImageTask(iconImageView).execute(listViewItem.getImg());
 
         titleTextView.setText(listViewItem.getTitle());
-        descTextView.setText(listViewItem.getPrice() + "   "+ listViewItem.getQuantity().toString() + "개");
+        descTextView.setText(listViewItem.getPrice().toString() + "원   "+ listViewItem.getQuantity().toString() + "개");
 
         return convertView;
     }
@@ -74,8 +74,8 @@ public class NBasketAdapter extends BaseAdapter {
     }
 
     // 아이템 데이터 추가를 위한 함수. 개발자가 원하는대로 작성 가능.
-    public void addItem(String img, String title, String desc, Integer quan) {
-        NBasketItem item = new NBasketItem(img,title,desc,quan);
+    public void addItem(String img, String title, Integer price, Integer quan) {
+        NBasketItem item = new NBasketItem(img,title,price,quan);
         listViewItemList.add(item);
     }
 

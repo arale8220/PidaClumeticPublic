@@ -1,10 +1,10 @@
 package cluemetic.dev.arale.pidaclumetic;
 
 public class NBasketItem {
-    String img, title, price;
-    Integer quantity;
+    String img, title;
+    Integer quantity, price;
 
-    public NBasketItem(String img, String title, String price, Integer quantity) {
+    public NBasketItem(String img, String title, Integer price, Integer quantity) {
         this.img = img;
         this.title = title;
         this.price = price;
@@ -27,11 +27,11 @@ public class NBasketItem {
         this.title = title;
     }
 
-    public String getPrice() {
+    public Integer getPrice() {
         return price;
     }
 
-    public void setPrice(String price) {
+    public void setPrice(Integer price) {
         this.price = price;
     }
 

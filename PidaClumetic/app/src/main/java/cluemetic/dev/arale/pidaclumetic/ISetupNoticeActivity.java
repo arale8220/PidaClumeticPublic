@@ -40,7 +40,7 @@ public class ISetupNoticeActivity extends AppCompatActivity {
 
             new Connection("http://ec2-13-125-246-38.ap-northeast-2.compute.amazonaws.com/notices").execute();
 
-        }else{
+        }else if (type == 1){
 
             Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar);
             setSupportActionBar(mToolbar);
@@ -48,8 +48,14 @@ public class ISetupNoticeActivity extends AppCompatActivity {
 
             new Connection("http://ec2-13-125-246-38.ap-northeast-2.compute.amazonaws.com/faqs").execute();
 
-        }
+        }else {
+            Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar);
+            setSupportActionBar(mToolbar);
+            getSupportActionBar().setTitle("이용약관");
 
+            new Connection("http://ec2-13-125-246-38.ap-northeast-2.compute.amazonaws.com/agreements?visible=true").execute();
+
+        }
 
 
     }

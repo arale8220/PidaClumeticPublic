@@ -171,7 +171,7 @@ public class JGroupActivity extends AppCompatActivity {
                                 String.valueOf(curr.getJSONArray("discount_rates").getJSONObject(1).getInt("rate")),
                                 String.valueOf(curr.getJSONArray("discount_rates").getJSONObject(2).getInt("quantity")),
                                 String.valueOf(curr.getJSONArray("discount_rates").getJSONObject(2).getInt("rate")),
-                                curr.getString("product")
+                                curr.getJSONObject("product").getString("url")
                         );
 
                     }
@@ -204,6 +204,7 @@ public class JGroupActivity extends AppCompatActivity {
             try{
 
                 Log.i("###", "55");
+                Log.i("###", params[10]);
                 URL url = new URL(params[10]);
                 HttpURLConnection con = (HttpURLConnection) url.openConnection();
                 con.setRequestMethod("GET");

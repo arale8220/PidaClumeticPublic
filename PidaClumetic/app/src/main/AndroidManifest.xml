@@ -6,6 +6,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 
     <application
         android:allowBackup="true"
@@ -32,23 +33,23 @@
                 android:resource="@xml/provider_paths"/>
         </provider>
 
-        <activity android:name=".BLoginActivity" android:launchMode="singleInstance" />
-        <activity android:name=".DTutorialActivity" android:launchMode="singleInstance" />
-        <activity android:name=".CSignupActivity" android:launchMode="singleInstance" />
-        <activity android:name=".ECategoryActivity" android:launchMode="singleInstance" />
+        <activity android:name=".BLoginActivity" android:launchMode="singleTop" />
+        <activity android:name=".DTutorialActivity" android:launchMode="singleTop" />
+        <activity android:name=".CSignupActivity" />
+        <activity android:name=".ECategoryActivity" android:launchMode="singleTop" />
         <activity android:name=".FSubCategoryActivity" />
         <activity android:name=".HProductActivity" />
         <activity android:name=".ISetupAccount1Activity" />
-        <activity android:name=".ISetupActivity" android:launchMode="singleInstance" />
+        <activity android:name=".ISetupActivity" android:launchMode="singleTop" />
         <activity android:name=".ISetupAccount2Activity" />
         <activity android:name=".ISetupAccount3Activity" />
         <activity android:name=".KAppVersionActivity" />
         <activity android:name=".LListActivity" />
         <activity android:name=".JGroupActivity" />
         <activity android:name=".JGroupProductActivity" />
-        <activity android:name=".MTesterActivity" android:launchMode="singleInstance" />
-        <activity android:name=".NBasketActivity" android:launchMode="singleInstance" />
-        <activity android:name=".OPidaActivity" android:launchMode="singleInstance"  />
+        <activity android:name=".MTesterActivity" android:launchMode="singleTop" />
+        <activity android:name=".NBasketActivity" android:launchMode="singleTop" />
+        <activity android:name=".OPidaActivity" android:launchMode="singleTop"  />
         <activity android:name=".QPurchaseDoneActivity" />
         <activity android:name=".ISetupNoticeActivity" />
         <activity android:name=".RPurchaseDescriptionActivity" />

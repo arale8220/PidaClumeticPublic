@@ -58,7 +58,9 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toTopOf="@+id/bottomNavigationView"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar">
+        app:layout_constraintTop_toBottomOf="@+id/toolbar"
+        app:layout_constraintVertical_bias="0.0"
+        tools:layout_editor_absoluteX="0dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -71,21 +73,29 @@
                 android:id="@+id/cream"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_margin="10dp"
                 android:adjustViewBounds="true"
-                android:scaleType="centerInside"
-                app:srcCompat="@drawable/img_cream"
                 android:background="#00000000"
-                android:layout_margin="10dp"/>
+                android:scaleType="centerInside"
+                app:srcCompat="@drawable/img_cream" />
 
             <ImageButton
                 android:id="@+id/baby"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_margin="10dp"
                 android:adjustViewBounds="true"
-                android:scaleType="centerInside"
-                app:srcCompat="@drawable/img_baby"
                 android:background="#00000000"
-                android:layout_margin="10dp"/>
+                android:scaleType="centerInside"
+                app:srcCompat="@drawable/img_baby" />
+
+            <TextView
+                android:id="@+id/textView6"
+                android:layout_margin="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:text="이용약관 및 개인정보 취급 방침 확인하기" />
         </LinearLayout>
     </ScrollView>
 

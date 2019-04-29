@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.NumberPicker;
 import android.widget.TextView;
@@ -37,11 +38,26 @@ import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+
+import kr.co.bootpay.Bootpay;
+import kr.co.bootpay.BootpayAnalytics;
+import kr.co.bootpay.enums.Method;
+import kr.co.bootpay.enums.PG;
+import kr.co.bootpay.listner.CancelListener;
+import kr.co.bootpay.listner.CloseListener;
+import kr.co.bootpay.listner.ConfirmListener;
+import kr.co.bootpay.listner.DoneListener;
+import kr.co.bootpay.listner.ErrorListener;
+import kr.co.bootpay.listner.ReadyListener;
+import kr.co.bootpay.model.BootExtra;
+import kr.co.bootpay.model.BootUser;
 
 public class JGroupProductActivity extends AppCompatActivity {
 
-    TextView mcompany, mtitle, mprice, mseller, mmanufac, mcountry, minfourl, mpriceNow;
+    TextView mcompany, mtitle, mprice, mseller, mmanufac, mcountry, minfourl, mpriceNow, mdiscount;
     ImageView mimg;
     Bitmap bm = null;
     String id, com, tit, pri, sell, manu, coun, inf, img, group_url;
@@ -50,8 +66,15 @@ public class JGroupProductActivity extends AppCompatActivity {
     HProductReviewAdapter reviewAdapter;
     String json_url="http://ec2-13-125-246-38.ap-northeast-2.compute.amazonaws.com/products/";
     String sale1q, sale1r, sale2q, sale2r, sale3q, sale3r;
-    TextView msale1q, msale1r, msale2q, msale2r, msale3q, msale3r;
+    TextView msale1q, msale1r, msale2q, msale2r, msale3q, msale3r, mpriceN;
     String productU;
+    SimpleDateFormat mFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+    Integer quant = 0;
+
+    Integer productPrice, tempDiscount=0;
+    View discountView;
+    LinearLayout discountLayout;
+    JSONArray PriceArray;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -63,12 +86,75 @@ public class JGroupProductActivity extends AppCompatActivity {
 
         new GroupProductCreate().execute();
 
-
-
-
+        // 초기설정 - 해당 프로젝트(안드로이드)의 application id 값을 설정합니다. 결제와 통계를 위해 꼭 필요합니다.
+        BootpayAnalytics.init(this, "5c46b055b6d49c2299e2a9e6");
 
     }
 
+    public void onClick_request(View v) {
+        // 결제호출
+        BootUser bootUser = new BootUser();
+        BootExtra bootExtra = new BootExtra().setQuotas(new int[] {0,2,3});
+
+        long mNow = System.currentTimeMillis();
+        Date mDate = new Date(mNow);
+
+
+
+        Bootpay.init(getFragmentManager())
+                .setApplicationId("5c46b055b6d49c2299e2a9e6") // 해당 프로젝트(안드로이드)의 application id 값
+                .setPG(PG.DANAL) // 결제할 PG 사
+                .setBootUser(bootUser)
+                .setBootExtra(bootExtra)
+//                .setUserPhone("010-1234-5678") // 구매자 전화번호
+                .setMethod(Method.CARD) // 결제수단
+                .setName("공동구매-"+tit) // 결제할 상품명
+                .setOrderId(mFormat.format(mDate)) // 결제 고유번호 expire_month
+                .setPrice(productPrice * quant) // 결제할 금액
+                .addItem(tit, quant, group_url , productPrice) // 주문정보에 담길 상품정보, 통계를 위해 사용
+//                .onConfirm(new ConfirmListener() { // 결제가 진행되기 바로 직전 호출되는 함수로, 주로 재고처리 등의 로직이 수행
+//                    @Override
+//                    public void onConfirm(@Nullable String message) {
+//
+//                        if (0 < stuck) Bootpay.confirm(message); // 재고가 있을 경우.
+//                        else Bootpay.removePaymentWindow(); // 재고가 없어 중간에 결제창을 닫고 싶을 경우
+//                        Log.d("confirm", message);
+//                    }
+//                })
+                .onDone(new DoneListener() { // 결제완료시 호출, 아이템 지급 등 데이터 동기화 로직을 수행합니다
+                    @Override
+                    public void onDone(@Nullable String message) {
+                        Log.d("done", message);
+                    }
+                })
+                .onReady(new ReadyListener() { // 가상계좌 입금 계좌번호가 발급되면 호출되는 함수입니다.
+                    @Override
+                    public void onReady(@Nullable String message) {
+                        Log.d("ready", message);
+                    }
+                })
+                .onCancel(new CancelListener() { // 결제 취소시 호출
+                    @Override
+                    public void onCancel(@Nullable String message) {
+
+                        Log.d("cancel", message);
+                    }
+                })
+                .onError(new ErrorListener() { // 에러가 났을때 호출되는 부분
+                    @Override
+                    public void onError(@Nullable String message) {
+                        Log.d("error", message);
+                    }
+                })
+                .onClose(
+                        new CloseListener() { //결제창이 닫힐때 실행되는 부분
+                            @Override
+                            public void onClose(String message) {
+                                Log.d("close", "close");
+                            }
+                        })
+                .request();
+    }
 
 
 
@@ -97,14 +183,14 @@ public class JGroupProductActivity extends AppCompatActivity {
                     JSONObject curr = new JSONObject(buffer.toString());
                     urlConn.disconnect();
 
-                    productU = curr.getString("product");
+                    productU = curr.getJSONObject("product").getString("url");
                     sale1q = String.valueOf(curr.getJSONArray("discount_rates").getJSONObject(0).getInt("quantity"));
                     sale1r = String.valueOf(curr.getJSONArray("discount_rates").getJSONObject(0).getInt("rate"));
                     sale2q = String.valueOf(curr.getJSONArray("discount_rates").getJSONObject(1).getInt("quantity"));
                     sale2r = String.valueOf(curr.getJSONArray("discount_rates").getJSONObject(1).getInt("rate"));
                     sale3q = String.valueOf(curr.getJSONArray("discount_rates").getJSONObject(2).getInt("quantity"));
                     sale3r = String.valueOf(curr.getJSONArray("discount_rates").getJSONObject(2).getInt("rate"));
-
+                    PriceArray = curr.getJSONArray("orders");
 
                     return null;
                 }
@@ -122,6 +208,7 @@ public class JGroupProductActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Void aVoid) {
             new ProductCreate().execute();
+            new PriceCreate().execute();
         }
     }
 
@@ -162,6 +249,9 @@ public class JGroupProductActivity extends AppCompatActivity {
                     img = JsonResult.getString("image");
                     id = String.valueOf(JsonResult.getInt("id"));
 
+                    productPrice = JsonResult.getInt("price");
+                    tempDiscount = JsonResult.getInt("temp_opening_discount");
+
                     return null;
                 }
 
@@ -192,7 +282,6 @@ public class JGroupProductActivity extends AppCompatActivity {
         mtitle = findViewById(R.id.title);
         mcompany = findViewById(R.id.company);
         mprice = findViewById(R.id.priceT);
-        mpriceNow = findViewById(R.id.priceN);
         mseller = findViewById(R.id.inform1);
         mmanufac = findViewById(R.id.inform2);
         mcountry = findViewById(R.id.inform3);
@@ -203,6 +292,18 @@ public class JGroupProductActivity extends AppCompatActivity {
         msale2r = findViewById(R.id.sale22);
         msale3q = findViewById(R.id.sale3);
         msale3r = findViewById(R.id.sale33);
+
+        discountLayout = findViewById(R.id.discountLayout);
+        discountView = findViewById(R.id.discountView);
+        if (tempDiscount==0){
+            discountLayout.setVisibility(LinearLayout.GONE);
+            discountView.setVisibility(View.GONE);
+        }else{
+            discountLayout.setVisibility(LinearLayout.VISIBLE);
+            discountView.setVisibility(View.VISIBLE);
+            mdiscount.setText(String.format("%d원 (자동 적용)", tempDiscount));
+            productPrice = productPrice - tempDiscount;
+        }
 
         mtitle.setText(tit);
         mcompany.setText(com);
@@ -216,7 +317,6 @@ public class JGroupProductActivity extends AppCompatActivity {
         msale2r.setText(sale2r + "% 할인");
         msale3q.setText(sale3q + "개 ~ ");
         msale3r.setText(sale3r + "% 할인");
-        mpriceNow.setText(""); //현재 가격을 알 수 없음
 
         minfourl.setOnClickListener(v -> {
             Intent browse = new Intent( Intent.ACTION_VIEW , Uri.parse(inf) );
@@ -239,6 +339,50 @@ public class JGroupProductActivity extends AppCompatActivity {
     }
 
 
+    class PriceCreate extends AsyncTask<Void, Void, Integer> {
+
+        @Override
+        protected Integer doInBackground(Void... voids) {
+            Integer count = 0;
+            for (int i = 0; i<PriceArray.length(); i++){
+                try{
+                    URL url = new URL(PriceArray.getString(i));
+                    HttpURLConnection urlConn = (HttpURLConnection) url.openConnection();
+                    urlConn.setRequestMethod("GET");
+                    urlConn.setDoInput(true);
+
+                    if (urlConn.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                        InputStream stream = urlConn.getInputStream();
+                        BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
+                        StringBuilder buffer = new StringBuilder();
+                        String line = "";
+                        while ((line = reader.readLine()) != null) { buffer.append(line); }
+                        reader.close();
+                        JSONObject JsonResult = new JSONObject(buffer.toString());
+                        urlConn.disconnect();
+
+                        count += JsonResult.getInt("quantity");
+                    }
+                    urlConn.disconnect();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            return count;
+        }
+
+        @Override
+        protected void onPostExecute(Integer res) {
+            ChangePriceN(res);
+        }
+    }
+
+    void ChangePriceN(Integer count){
+        mpriceNow = findViewById(R.id.priceN);
+        mpriceNow.setText("  현재 "+count+"개 구매 중");
+    }
+
 
 
 
@@ -256,7 +400,8 @@ public class JGroupProductActivity extends AppCompatActivity {
             try {
                 Log.i("###", "111111");
                 //send get request
-                URL url = new URL(json_url + id);
+                Log.i("###", productU);
+                URL url = new URL(productU);
                 HttpURLConnection con = (HttpURLConnection) url.openConnection();
                 con.setRequestMethod("GET");
                 con.setRequestProperty("Content-Type", "application/json");
@@ -294,7 +439,7 @@ public class JGroupProductActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(JSONObject result) {
-            JSONArray responseIngredeint = null;
+            JSONArray responseIngredeint;
             try {
                 ArrayList<HIngredient> arr = new ArrayList<HIngredient>();
                 responseIngredeint = result.getJSONArray("ingredients");

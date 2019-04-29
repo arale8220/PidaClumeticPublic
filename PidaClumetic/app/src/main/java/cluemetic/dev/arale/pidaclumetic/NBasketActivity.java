@@ -25,6 +25,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.NumberPicker;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.api.client.extensions.android.http.AndroidHttp;
@@ -65,6 +66,7 @@ public class NBasketActivity extends AppCompatActivity {
     private BottomNavigationView navigationView;
     ListView listview;
     NBasketAdapter adapter;
+    TextView mtotalP;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -96,7 +98,7 @@ public class NBasketActivity extends AppCompatActivity {
         Menu menu = navigationView.getMenu();
         MenuItem menuItem = menu.getItem(1);
         menuItem.setChecked(true);
-
+        mtotalP = findViewById(R.id.purchase);
 
 
 
@@ -206,6 +208,8 @@ public class NBasketActivity extends AppCompatActivity {
 
     void updatelist(){
 
+        Integer totalPrice=0;
+
         SharedPreferences sharedPreferences = getSharedPreferences("order", MODE_PRIVATE);
         try {
             JSONArray products = new JSONArray(sharedPreferences.getString("products","[]"));
@@ -226,8 +230,10 @@ public class NBasketActivity extends AppCompatActivity {
                 if (product.getInt("quantity")!=0){
                     adapter.addItem(product.getString("img"),
                             product.getString("name"),
-                            product.getString("price"),
+                            product.getInt("price"),
                             product.getInt("quantity"));
+
+                    totalPrice += product.getInt("price") * product.getInt("quantity");
 
 
                     productsSP.put(product);
@@ -235,6 +241,7 @@ public class NBasketActivity extends AppCompatActivity {
                 }
             }
 
+            mtotalP.setText("총 " + totalPrice + "원 주문하기");
 
             SharedPreferences.Editor editor = sharedPreferences.edit();
             editor.putString("products", productsSP.toString());

@@ -1,13 +1,16 @@
 package cluemetic.dev.arale.pidaclumetic;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -17,7 +20,8 @@ public class Greeting3 extends Fragment {
 
     private RadioGroup type1, type2;
     private RadioButton type;
-    private CheckBox a,b,c,d,e,f,A,B,C,D,E,F;
+    private CheckBox a,b,c,d,e,f,A,B,C,D,E,F,agreementCB;
+    private TextView aggrement;
     private Integer t;
 
     @Override
@@ -48,6 +52,14 @@ public class Greeting3 extends Fragment {
         E = view.findViewById( R.id.allergy5 );
         F = view.findViewById( R.id.allergy6 );
 
+        aggrement = view.findViewById( R.id.agreementtext2);
+        agreementCB = view.findViewById(R.id.agreement);
+        aggrement.setOnClickListener(v -> {
+            Intent intent = new Intent(getActivity(), ISetupNoticeActivity.class);
+            intent.putExtra("notice0faq1", 2);
+            startActivity(intent);
+        });
+
         //알러지에서 없음을 선택하는 경우 다른 모든 것들의 체크를 없앰
         F.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (isChecked) {
@@ -58,6 +70,11 @@ public class Greeting3 extends Fragment {
                 E.setChecked(false);
             }
         });
+        A.setOnCheckedChangeListener((buttonView, isChecked) -> { if (isChecked) F.setChecked(false); });
+        B.setOnCheckedChangeListener((buttonView, isChecked) -> { if (isChecked) F.setChecked(false); });
+        C.setOnCheckedChangeListener((buttonView, isChecked) -> { if (isChecked) F.setChecked(false); });
+        D.setOnCheckedChangeListener((buttonView, isChecked) -> { if (isChecked) F.setChecked(false); });
+        E.setOnCheckedChangeListener((buttonView, isChecked) -> { if (isChecked) F.setChecked(false); });
 
         return view;
     }
@@ -142,11 +159,16 @@ public class Greeting3 extends Fragment {
         }
         preRes.add(curr);
 
+        if (agreementCB.isChecked()){
+            String[] res = new String[preRes.size()];
+            preRes.toArray(res);
+            return res;
+        }else{
+            Toast.makeText(getContext(), "약관을 읽고 동의해주세요", Toast.LENGTH_SHORT).show();
+            return null;
+        }
 
-        String[] res = new String[preRes.size()];
-        preRes.toArray(res);
 
-        return res;
     }
 }
 

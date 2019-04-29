@@ -100,11 +100,14 @@ public class ECategoryActivity extends AppCompatActivity {
         //카메라 버튼을 누르면 사진 촬영 후 제일 위의 스트링을 반환.
         //그 스트링을 이용하여 startNewActivity로 전달.
         ImageButton mcamera = findViewById(R.id.btnCamera);
-        mcamera.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startCamera();
-            }
+        mcamera.setOnClickListener(v -> startCamera());
+
+        //이용약관 보여주기
+        TextView magreements = findViewById(R.id.textView6);
+        magreements.setOnClickListener(v -> {
+            intent = new Intent(getBaseContext(), ISetupNoticeActivity.class);
+            intent.putExtra("notice0faq1", 2);
+            startActivity(intent);
         });
 
 

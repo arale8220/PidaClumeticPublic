@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.NumberPicker;
 import android.widget.TextView;
@@ -46,13 +47,16 @@ public class HProductActivity extends AppCompatActivity {
     String[] ingredients, reviews;
     String json_url="http://ec2-13-125-246-38.ap-northeast-2.compute.amazonaws.com/products/";
     String info_url="";
-    TextView mcompany, mtitle, mprice, mseller, mmanufac, mcountry, minfourl;
+    TextView mcompany, mtitle, mprice, mseller, mmanufac, mcountry, minfourl, mdiscount;
     ImageView mimg;
     Bitmap bm = null;
     String id, com, tit, pri, sell, manu, coun, inf, img, subCount;
     ListView mreview, mingredient;
     HProductIngredientsAdapter ingredientAdapter;
     HProductReviewAdapter reviewAdapter;
+    Integer productPrice, tempDiscount;
+    View discountView;
+    LinearLayout discountLayout;
 
 
     @Override
@@ -108,6 +112,9 @@ public class HProductActivity extends AppCompatActivity {
                     subCount = lastToken;
                     img = JsonResult.getString("image");
 
+                    productPrice = JsonResult.getInt("price");
+                    tempDiscount = JsonResult.getInt("temp_opening_discount");
+
                     return null;
                 }
 
@@ -143,6 +150,17 @@ public class HProductActivity extends AppCompatActivity {
         mmanufac = findViewById(R.id.inform2);
         mcountry = findViewById(R.id.inform3);
         minfourl = findViewById(R.id.inform4);
+        mdiscount = findViewById(R.id.inform222);
+
+        discountLayout = findViewById(R.id.discountLayout);
+        discountView = findViewById(R.id.discountView);
+        if (tempDiscount==0){
+            discountLayout.setVisibility(LinearLayout.GONE);
+            discountView.setVisibility(View.GONE);
+        }else{
+            mdiscount.setText(String.format("%d원 (자동 적용)", tempDiscount));
+            productPrice = productPrice - tempDiscount;
+        }
 
         mtitle.setText(tit);
         mcompany.setText(com);
@@ -520,7 +538,7 @@ public class HProductActivity extends AppCompatActivity {
                                         newJ.put("url", json_url+id+"/");
                                         newJ.put("img", img);
                                         newJ.put("id", id);
-                                        newJ.put("price", pri);
+                                        newJ.put("price", productPrice);
                                         newJ.put("quantity", num[0]);
                                         newJ.put("name", tit);
                                         newProducts.put(newJ);
@@ -545,7 +563,7 @@ public class HProductActivity extends AppCompatActivity {
                                                 newJ.put("url", json_url+id+"/");
                                                 newJ.put("img", img);
                                                 newJ.put("id", id);
-                                                newJ.put("price", pri);
+                                                newJ.put("price", productPrice);
                                                 newJ.put("quantity", num[0]);
                                                 newJ.put("name", tit);
                                                 newProducts.put(newJ);
