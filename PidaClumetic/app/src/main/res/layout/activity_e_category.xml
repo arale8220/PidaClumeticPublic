@@ -89,13 +89,219 @@
                 android:scaleType="centerInside"
                 app:srcCompat="@drawable/img_baby" />
 
-            <TextView
-                android:id="@+id/textView6"
-                android:layout_margin="10dp"
+
+            <LinearLayout
+                android:visibility="gone"
+                android:id="@+id/babypick"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="20dp"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:gravity="center_horizontal"
-                android:text="이용약관 및 개인정보 취급 방침 확인하기" />
+                android:orientation="vertical"
+                android:layout_marginLeft="20dp">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:weightSum="4.5">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1.5"
+                        android:text="상호 :"
+                        android:textColor="@color/lgt_gray"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        app:fontFamily="@font/notosans" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="3"
+                        android:text="베이비픽"
+                        android:textColor="@color/drk_gray"
+                        android:textSize="14sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:weightSum="4.5">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1.5"
+                        android:text="대표자 :"
+                        android:textColor="@color/lgt_gray"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        app:fontFamily="@font/notosans" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="3"
+                        android:text="오승언"
+                        android:textColor="@color/drk_gray"
+                        android:textSize="14sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:weightSum="4.5">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1.5"
+                        android:text="대표번호 :"
+                        android:textColor="@color/lgt_gray"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        app:fontFamily="@font/notosans" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="3"
+                        android:text="010-2129-7481"
+                        android:textColor="@color/drk_gray"
+                        android:textSize="14sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:weightSum="4.5">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1.5"
+                        android:text="주소 :"
+                        android:textColor="@color/lgt_gray"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        app:fontFamily="@font/notosans" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="3"
+                        android:text="경기도 수원시 영통구 월드컵로 206,211호 (아주대학교)"
+                        android:textColor="@color/drk_gray"
+                        android:textSize="14sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:weightSum="4.5">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1.5"
+                        android:text="사업자등록번호 :"
+                        android:textColor="@color/lgt_gray"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        app:fontFamily="@font/notosans" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="3"
+                        android:text="625-31-00574"
+                        android:textColor="@color/drk_gray"
+                        android:textSize="14sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:weightSum="4.5">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1.5"
+                        android:text="전자우편 :"
+                        android:textColor="@color/lgt_gray"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        app:fontFamily="@font/notosans" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="3"
+                        android:text="babypickteam@gmail.com"
+                        android:textColor="@color/drk_gray"
+                        android:textSize="14sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:weightSum="4.5">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1.5"
+                        android:text="입점문의 :"
+                        android:textColor="@color/lgt_gray"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        app:fontFamily="@font/notosans" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="3"
+                        android:text="babypickteam@gmail.com"
+                        android:textColor="@color/drk_gray"
+                        android:textSize="14sp" />
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_horizontal"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/textView6"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="이용약관 및 개인정보 취급 방침" />
+
+                <TextView
+                    android:id="@+id/textView7"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="  ||  " />
+
+                <TextView
+                    android:id="@+id/textView8"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="사업자 정보 확인" />
+            </LinearLayout>
+
         </LinearLayout>
     </ScrollView>
 

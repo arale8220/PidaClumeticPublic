@@ -75,11 +75,15 @@ public class JGroupProductActivity extends AppCompatActivity {
     View discountView;
     LinearLayout discountLayout;
     JSONArray PriceArray;
+    String username;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_j_group_product);
+
+        SharedPreferences sharedPreferences = getSharedPreferences("user", MODE_PRIVATE);
+        username = sharedPreferences.getString("username", "");
 
         Intent intent = getIntent();
         group_url = intent.getStringExtra("group_url");
@@ -88,30 +92,34 @@ public class JGroupProductActivity extends AppCompatActivity {
 
         // 초기설정 - 해당 프로젝트(안드로이드)의 application id 값을 설정합니다. 결제와 통계를 위해 꼭 필요합니다.
         BootpayAnalytics.init(this, "5c46b055b6d49c2299e2a9e6");
-
     }
 
     public void onClick_request(View v) {
         // 결제호출
+        Log.i("###", "###########################");
         BootUser bootUser = new BootUser();
         BootExtra bootExtra = new BootExtra().setQuotas(new int[] {0,2,3});
 
+
+        Log.i("###", "###########################");
         long mNow = System.currentTimeMillis();
         Date mDate = new Date(mNow);
 
 
-
+        Log.i("###", "###########################");
         Bootpay.init(getFragmentManager())
                 .setApplicationId("5c46b055b6d49c2299e2a9e6") // 해당 프로젝트(안드로이드)의 application id 값
-                .setPG(PG.DANAL) // 결제할 PG 사
+                .setPG(PG.KCP) // 결제할 PG 사
                 .setBootUser(bootUser)
                 .setBootExtra(bootExtra)
 //                .setUserPhone("010-1234-5678") // 구매자 전화번호
                 .setMethod(Method.CARD) // 결제수단
                 .setName("공동구매-"+tit) // 결제할 상품명
-                .setOrderId(mFormat.format(mDate)) // 결제 고유번호 expire_month
-                .setPrice(productPrice * quant) // 결제할 금액
-                .addItem(tit, quant, group_url , productPrice) // 주문정보에 담길 상품정보, 통계를 위해 사용
+                .setOrderId(mFormat.format(mDate)+username) // 결제 고유번호 expire_month
+//                .setPrice(productPrice * quant) // 결제할 금액
+                .setPrice(100) // 결제할 금액
+                .addItem("이름", 2, "디스크립션은 어디까지 가려나 어어어어어디까지이이이이" , 50) // 주문정보에 담길 상품정보, 통계를 위해 사용
+//                .addItem(tit, quant, group_url , productPrice) // 주문정보에 담길 상품정보, 통계를 위해 사용
 //                .onConfirm(new ConfirmListener() { // 결제가 진행되기 바로 직전 호출되는 함수로, 주로 재고처리 등의 로직이 수행
 //                    @Override
 //                    public void onConfirm(@Nullable String message) {
@@ -124,25 +132,29 @@ public class JGroupProductActivity extends AppCompatActivity {
                 .onDone(new DoneListener() { // 결제완료시 호출, 아이템 지급 등 데이터 동기화 로직을 수행합니다
                     @Override
                     public void onDone(@Nullable String message) {
+                        Toast.makeText(JGroupProductActivity.this, "결제가 완료되었습니다", Toast.LENGTH_LONG);
                         Log.d("done", message);
+                        new Purchase(group_url, quant).execute();
                     }
                 })
                 .onReady(new ReadyListener() { // 가상계좌 입금 계좌번호가 발급되면 호출되는 함수입니다.
                     @Override
                     public void onReady(@Nullable String message) {
+                        Toast.makeText(JGroupProductActivity.this, "계좌번호가 발급되었습니다", Toast.LENGTH_LONG);
                         Log.d("ready", message);
                     }
                 })
                 .onCancel(new CancelListener() { // 결제 취소시 호출
                     @Override
                     public void onCancel(@Nullable String message) {
-
+                        Toast.makeText(JGroupProductActivity.this, "결제가 취소되었습니다", Toast.LENGTH_LONG);
                         Log.d("cancel", message);
                     }
                 })
                 .onError(new ErrorListener() { // 에러가 났을때 호출되는 부분
                     @Override
                     public void onError(@Nullable String message) {
+                        Toast.makeText(JGroupProductActivity.this, "에러가 발생하여 결제가 취소되었습니다", Toast.LENGTH_LONG);
                         Log.d("error", message);
                     }
                 })
@@ -154,6 +166,8 @@ public class JGroupProductActivity extends AppCompatActivity {
                             }
                         })
                 .request();
+
+        Log.i("###", "###########################");
     }
 
 
@@ -644,7 +658,8 @@ public class JGroupProductActivity extends AppCompatActivity {
         builder3.setPositiveButton("확인",
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                        new Purchase(group_url, num[0]).execute();
+                        quant = num[0];
+                        onClick_request(findViewById(R.id.parent));
                     }
                 });
         builder3.setNegativeButton("취소", new DialogInterface.OnClickListener() {
@@ -654,6 +669,8 @@ public class JGroupProductActivity extends AppCompatActivity {
         });
         builder3.show();
     }
+
+
 
     private class Purchase extends AsyncTask<String, Void, Boolean> {
         String group_url_str;
@@ -671,7 +688,7 @@ public class JGroupProductActivity extends AppCompatActivity {
         @Override
         protected Boolean doInBackground(String... params) {
             try{
-
+                Log.i("###", "0000");
                 SharedPreferences dd = getSharedPreferences("user", MODE_PRIVATE);
                 String token = dd.getString("access_token", "");
                 URL url = new URL("http://ec2-13-125-246-38.ap-northeast-2.compute.amazonaws.com/group-purchase-orders/?access_token="+token);
@@ -682,6 +699,7 @@ public class JGroupProductActivity extends AppCompatActivity {
                 con.setDoInput(true);
                 con.connect();
 
+                Log.i("###", "0001");
                 SharedPreferences tut = getSharedPreferences("user", MODE_PRIVATE);
                 JSONObject post = new JSONObject();
                 post.put("event", group_url_str);

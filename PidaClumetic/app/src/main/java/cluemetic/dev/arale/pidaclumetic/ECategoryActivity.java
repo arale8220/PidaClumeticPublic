@@ -20,6 +20,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -108,6 +109,17 @@ public class ECategoryActivity extends AppCompatActivity {
             intent = new Intent(getBaseContext(), ISetupNoticeActivity.class);
             intent.putExtra("notice0faq1", 2);
             startActivity(intent);
+        });
+
+        //사업자정보 보여주기
+        TextView mcompany = findViewById(R.id.textView8);
+        LinearLayout babypick = findViewById(R.id.babypick);
+        mcompany.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (babypick.getVisibility() == LinearLayout.GONE) babypick.setVisibility(LinearLayout.VISIBLE);
+                else babypick.setVisibility(LinearLayout.GONE);
+            }
         });
 
 
