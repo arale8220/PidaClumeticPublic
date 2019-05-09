@@ -162,11 +162,13 @@ public class MTesterActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 SharedPreferences user = getSharedPreferences("user", MODE_PRIVATE);
-                new Purchase(
-                        user.getBoolean("paymentOK", false),
-                        user.getBoolean("deliveryOK", false),
-                        user.getString("access_token", ""))
-                        .execute();
+                onClick_request();
+
+//                new Purchase(
+//                        user.getBoolean("paymentOK", false),
+//                        user.getBoolean("deliveryOK", false),
+//                        user.getString("access_token", ""))
+//                        .execute();
             }
         });
 
@@ -196,7 +198,7 @@ public class MTesterActivity extends AppCompatActivity {
                 .setApplicationId("5c46b055b6d49c2299e2a9e6") // 해당 프로젝트(안드로이드)의 application id 값
                 .setPG(PG.KCP)
                 .setMethod(Method.CARD) // 결제수단
-                .setName("PIDA 상품 구매") // 결제할 상품명
+                .setName("PIDA 테스터 구매") // 결제할 상품명
                 .setOrderId(username+foruniquenum) // 결제 고유번호
                 .setPrice(2500) // 결제할 금액
 //                .addItem(tit, quant, "부분환불예정 (공동구매)" , productPrice) // 주문정보에 담길 상품정보, 통계를 위해 사용
