@@ -94,9 +94,9 @@ public class ISetupActivity extends AppCompatActivity {
                 case R.id.account1 :
                     goToOther(1);
                     break ;
-                case R.id.account2 :
-                    goToOther(2);
-                    break ;
+//                case R.id.account2 :
+//                    goToOther(2);
+//                    break ;
                 case R.id.account3 :
                     goToOther(3);
                     break;
@@ -123,8 +123,8 @@ public class ISetupActivity extends AppCompatActivity {
         security2.setOnClickListener(onClickListener) ;
         Button account1 = (Button) findViewById(R.id.account1) ;
         account1.setOnClickListener(onClickListener) ;
-        Button account2 = (Button) findViewById(R.id.account2) ;
-        account2.setOnClickListener(onClickListener) ;
+//        Button account2 = (Button) findViewById(R.id.account2) ;
+//        account2.setOnClickListener(onClickListener) ;
         Button account3 = (Button) findViewById(R.id.account3) ;
         account3.setOnClickListener(onClickListener) ;
         Button center1 = (Button) findViewById(R.id.center1) ;

@@ -69,15 +69,15 @@ public class OPidaProductAdapter extends PagerAdapter {
         num.setText(products.get(position).getNumber());
 
         Integer stt = products.get(position).getState();
-        if (stt == 0){
-            progressBar.setProgress(5);
-            status1.setTextColor(Color.argb(255,255,82,89));
+        if (stt == 2){
+            progressBar.setProgress(100);
+            status3.setTextColor(Color.argb(255,255,82,89));
         }else if (stt == 1){
             progressBar.setProgress(50);
             status2.setTextColor(Color.argb(255,255,82,89));
         }else {
-            progressBar.setProgress(100);
-            status3.setTextColor(Color.argb(255,255,82,89));
+            progressBar.setProgress(5);
+            status1.setTextColor(Color.argb(255,255,82,89));
         }
 
         View.OnClickListener onClickListener = new View.OnClickListener(){

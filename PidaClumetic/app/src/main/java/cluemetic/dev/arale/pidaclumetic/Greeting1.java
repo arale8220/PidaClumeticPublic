@@ -55,7 +55,7 @@ public class Greeting1 extends Fragment {
             }
             //ebtn.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
         }else {
-            etext.setText("이미 가입된 이메일입니다");
+            etext.setText("존재하거나 탈퇴한 이메일입니다");
             ebtn.setBackgroundResource(R.drawable.ic_cancel);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 ebtn.setBackgroundTintList( ColorStateList.valueOf( getResources().getColor(R.color.lgt_gray )) );

@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -76,6 +77,7 @@ public class JGroupProductActivity extends AppCompatActivity {
     LinearLayout discountLayout;
     JSONArray PriceArray;
     String username;
+    Integer foruniquenum=0;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -88,86 +90,66 @@ public class JGroupProductActivity extends AppCompatActivity {
         Intent intent = getIntent();
         group_url = intent.getStringExtra("group_url");
 
+        new UniqueNum().execute();
         new GroupProductCreate().execute();
+    }
+
+    public void onClick_request() {
 
         // 초기설정 - 해당 프로젝트(안드로이드)의 application id 값을 설정합니다. 결제와 통계를 위해 꼭 필요합니다.
         BootpayAnalytics.init(this, "5c46b055b6d49c2299e2a9e6");
-    }
 
-    public void onClick_request(View v) {
-        // 결제호출
-        Log.i("###", "###########################");
-        BootUser bootUser = new BootUser();
-        BootExtra bootExtra = new BootExtra().setQuotas(new int[] {0,2,3});
-
-
-        Log.i("###", "###########################");
+        Log.i("###", "##########################2222#");
         long mNow = System.currentTimeMillis();
         Date mDate = new Date(mNow);
 
-
-        Log.i("###", "###########################");
+        Log.i("###", "##########################3333#");
+        // 결제가 진행되기 바로 직전 호출되는 함수로, 주로 재고처리 등의 로직이 수행
+        // 결제완료시 호출, 아이템 지급 등 데이터 동기화 로직을 수행합니다
+        // 가상계좌 입금 계좌번호가 발급되면 호출되는 함수입니다.
+        // 결제 취소시 호출
+        // 에러가 났을때 호출되는 부분
+        //결제창이 닫힐때 실행되는 부분
         Bootpay.init(getFragmentManager())
                 .setApplicationId("5c46b055b6d49c2299e2a9e6") // 해당 프로젝트(안드로이드)의 application id 값
-                .setPG(PG.KCP) // 결제할 PG 사
-                .setBootUser(bootUser)
-                .setBootExtra(bootExtra)
-//                .setUserPhone("010-1234-5678") // 구매자 전화번호
+                .setPG(PG.KCP)
                 .setMethod(Method.CARD) // 결제수단
                 .setName("공동구매-"+tit) // 결제할 상품명
-                .setOrderId(mFormat.format(mDate)+username) // 결제 고유번호 expire_month
-//                .setPrice(productPrice * quant) // 결제할 금액
-                .setPrice(100) // 결제할 금액
-                .addItem("이름", 2, "디스크립션은 어디까지 가려나 어어어어어디까지이이이이" , 50) // 주문정보에 담길 상품정보, 통계를 위해 사용
-//                .addItem(tit, quant, group_url , productPrice) // 주문정보에 담길 상품정보, 통계를 위해 사용
-//                .onConfirm(new ConfirmListener() { // 결제가 진행되기 바로 직전 호출되는 함수로, 주로 재고처리 등의 로직이 수행
-//                    @Override
-//                    public void onConfirm(@Nullable String message) {
-//
-//                        if (0 < stuck) Bootpay.confirm(message); // 재고가 있을 경우.
-//                        else Bootpay.removePaymentWindow(); // 재고가 없어 중간에 결제창을 닫고 싶을 경우
-//                        Log.d("confirm", message);
-//                    }
-//                })
-                .onDone(new DoneListener() { // 결제완료시 호출, 아이템 지급 등 데이터 동기화 로직을 수행합니다
-                    @Override
-                    public void onDone(@Nullable String message) {
-                        Toast.makeText(JGroupProductActivity.this, "결제가 완료되었습니다", Toast.LENGTH_LONG);
-                        Log.d("done", message);
-                        new Purchase(group_url, quant).execute();
-                    }
+                .setOrderId(username+foruniquenum) // 결제 고유번호
+                .setPrice(productPrice * quant) // 결제할 금액
+                .addItem(tit, quant, "부분환불예정 (공동구매)" , productPrice) // 주문정보에 담길 상품정보, 통계를 위해 사용
+                .onConfirm(message -> {
+//                    if (0 < stuck) Bootpay.confirm(message); // 재고가 있을 경우.
+//                    else Bootpay.removePaymentWindow(); // 재고가 없어 중간에 결제창을 닫고 싶을 경우
+                    Log.d("confirm", message);
                 })
-                .onReady(new ReadyListener() { // 가상계좌 입금 계좌번호가 발급되면 호출되는 함수입니다.
-                    @Override
-                    public void onReady(@Nullable String message) {
-                        Toast.makeText(JGroupProductActivity.this, "계좌번호가 발급되었습니다", Toast.LENGTH_LONG);
-                        Log.d("ready", message);
-                    }
+                .onDone(message -> {
+                    Toast.makeText(JGroupProductActivity.this, "결제가 완료되었습니다", Toast.LENGTH_LONG);
+                    Log.d("done", message);
+                    new Purchase(group_url, quant).execute();
                 })
-                .onCancel(new CancelListener() { // 결제 취소시 호출
-                    @Override
-                    public void onCancel(@Nullable String message) {
-                        Toast.makeText(JGroupProductActivity.this, "결제가 취소되었습니다", Toast.LENGTH_LONG);
-                        Log.d("cancel", message);
-                    }
+                .onReady(message -> {
+                    Toast.makeText(JGroupProductActivity.this, "계좌번호가 발급되었습니다", Toast.LENGTH_LONG);
+                    Log.d("ready", message);
                 })
-                .onError(new ErrorListener() { // 에러가 났을때 호출되는 부분
-                    @Override
-                    public void onError(@Nullable String message) {
-                        Toast.makeText(JGroupProductActivity.this, "에러가 발생하여 결제가 취소되었습니다", Toast.LENGTH_LONG);
-                        Log.d("error", message);
-                    }
+                .onCancel(message -> {
+                    Toast.makeText(JGroupProductActivity.this, "결제가 취소되었습니다", Toast.LENGTH_LONG);
+                    Log.d("cancel", message);
                 })
-                .onClose(
-                        new CloseListener() { //결제창이 닫힐때 실행되는 부분
-                            @Override
-                            public void onClose(String message) {
-                                Log.d("close", "close");
-                            }
-                        })
+                .onError(message -> {
+                    Toast.makeText(JGroupProductActivity.this, "에러가 발생하여 결제가 취소되었습니다", Toast.LENGTH_LONG);
+                    Log.d("error", message);
+                })
+                .onClose(message -> Log.d("close", "close"))
                 .request();
-
         Log.i("###", "###########################");
+
+
+
+
+
+
+
     }
 
 
@@ -396,6 +378,47 @@ public class JGroupProductActivity extends AppCompatActivity {
         mpriceNow = findViewById(R.id.priceN);
         mpriceNow.setText("  현재 "+count+"개 구매 중");
     }
+
+    class UniqueNum extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            Integer count = 0;
+            //get the saved token
+            SharedPreferences getval = getSharedPreferences("user", MODE_PRIVATE);
+            String token = getval.getString("access_token", "");
+            String email = getval.getString("username", "");
+            try{
+                URL url = new URL("http://ec2-13-125-246-38.ap-northeast-2.compute.amazonaws.com/users/"+email+"?access_token="+token);
+                HttpURLConnection urlConn = (HttpURLConnection) url.openConnection();
+                urlConn.setRequestMethod("GET");
+                urlConn.setDoInput(true);
+
+                if (urlConn.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                    InputStream stream = urlConn.getInputStream();
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
+                    StringBuilder buffer = new StringBuilder();
+                    String line = "";
+                    while ((line = reader.readLine()) != null) { buffer.append(line); }
+                    reader.close();
+                    JSONObject JsonResult = new JSONObject(buffer.toString());
+                    urlConn.disconnect();
+
+                    count += JsonResult.getJSONArray("tester_orders").length();
+                    count += JsonResult.getJSONArray("purchase_orders").length();
+                    count += JsonResult.getJSONArray("group_purchase_orders").length();
+
+                    foruniquenum = count;
+                }
+                urlConn.disconnect();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+    }
+
 
 
 
@@ -638,8 +661,8 @@ public class JGroupProductActivity extends AppCompatActivity {
     void show()
     {
         AlertDialog.Builder builder3 = new AlertDialog.Builder(this);
-        builder3.setTitle("공동구매");
-        builder3.setMessage("구매할 상품의 개수를 선택해주세요. \n\n 공동구매의 경우 상품은 원가로 결제되며, 공동구매가 마감된 이후 할인액만큼 환불이 이루어집니다. \n\n 주의하세요! 확인을 누르면 구매가 확정됩니다.");
+        builder3.setTitle("공동구매 상품 개수");
+        builder3.setMessage("구매할 상품의 개수를 선택해주세요. 공동구매의 경우 상품은 원가로 결제되며, 공동구매가 마감된 이후 할인액만큼 환불이 이루어집니다. \n\n 주의하세요! 현재 저장된 배송지역으로 배송됩니다. 설정에서 배송 지역은 변경 가능합니다.");
         final int[] num = {1};
 
         NumberPicker np = new NumberPicker(this);
@@ -656,17 +679,22 @@ public class JGroupProductActivity extends AppCompatActivity {
         builder3.setView(np);
 
         builder3.setPositiveButton("확인",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        quant = num[0];
-                        onClick_request(findViewById(R.id.parent));
-                    }
+                (dialog, which) -> {
+                    quant = num[0];
+                    show2();
                 });
-        builder3.setNegativeButton("취소", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-            }
+        builder3.setNegativeButton("취소", (dialog, which) -> {
         });
+        builder3.show();
+    }
+
+    void show2()
+    {
+        AlertDialog.Builder builder3 = new AlertDialog.Builder(this);
+        builder3.setTitle("공동구매 확정");
+        builder3.setMessage("주의하세요!\n 이미 저장된 배송 지역으로 배송될 예정입니다. 설정에서 배송 지역은 변경할 수 있습니다.\n\n 확인을 누르면 결제창으로 이동합니다.");
+        builder3.setPositiveButton("확인", (dialog, which) -> onClick_request());
+        builder3.setNegativeButton("취소", (dialog, which) -> { });
         builder3.show();
     }
 
@@ -736,7 +764,7 @@ public class JGroupProductActivity extends AppCompatActivity {
                 finish();
             }
 
-            else Toast.makeText(JGroupProductActivity.this, "주문에 실패하였습니다. 입력한 정보를 입력해주세요", Toast.LENGTH_SHORT).show();
+            else Toast.makeText(JGroupProductActivity.this, "주문에 실패하였습니다. 입력한 정보를 확인해주세요", Toast.LENGTH_SHORT).show();
         }
     }
 

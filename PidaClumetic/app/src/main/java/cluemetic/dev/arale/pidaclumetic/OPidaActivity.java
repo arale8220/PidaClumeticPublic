@@ -185,12 +185,16 @@ public class OPidaActivity extends AppCompatActivity {
                     Log.i("###", "get PidaData at PidaActivity--make tester order JSONArray");
 
                     for (int i=0; i<purchase_orders.length(); i++){
+                        Log.i("###", i + "and length is " + purchase_orders.length());
                         JSONObject temp = purchase_orders.getJSONObject(i);
                         JSONObject currOrder = new JSONObject();
                         currOrder.put("type", 1);
                         currOrder.put("order_time", temp.getString("order_time"));
-                        currOrder.put("imgUrl", temp.getString("image"));
+                        Log.i("###", "get PidaData at PidaActivity--make purchase order JSONArray111");
+                        currOrder.put("imgUrl", temp.getJSONArray("items").getJSONObject(0).getJSONObject("product").getString("image"));
+                        Log.i("###", "get PidaData at PidaActivity--make purchase order JSONArray222");
                         currOrder.put("status", temp.getInt("status"));
+                        Log.i("###", "get PidaData at PidaActivity--make purchase order JSONArray333");
                         currOrder.put("url", temp.getString("url"));
                         if (temp.getJSONArray("items").length()==1) currOrder.put("num", "");
                         else currOrder.put("num", "+" + String.valueOf(temp.getJSONArray("items").length()-1));
@@ -203,7 +207,7 @@ public class OPidaActivity extends AppCompatActivity {
                         JSONObject currOrder = new JSONObject();
                         currOrder.put("type", 2);
                         currOrder.put("order_time", temp.getString("order_time"));
-                        currOrder.put("imgUrl", temp.getString("image"));
+                        currOrder.put("imgUrl", temp.getJSONObject("event").getJSONObject("product").getString("image"));
                         currOrder.put("status", temp.getInt("status"));
                         currOrder.put("url", temp.getString("url"));
                         currOrder.put("num", "");
@@ -228,7 +232,7 @@ public class OPidaActivity extends AppCompatActivity {
                     });
 
                     //make OPIDAPRODUCT
-                    products = new ArrayList<OPidaProduct>();
+                    products = new ArrayList<>();
                     for (int i=0; i<all_order_list.size(); i++){
                         OPidaProduct curr = new OPidaProduct(
                                 all_order_list.get(i).getInt("type"),
@@ -273,6 +277,7 @@ public class OPidaActivity extends AppCompatActivity {
     //products를 받아 화면에 리스트 띄워주기.
     //현재 사진을 로드하는 데에 시간이 조금 걸림.
     void showList(){
+        if (products.size() > 0) findViewById(R.id.textView9).setVisibility(View.GONE);
         adapter = new OPidaProductAdapter(products, this);
         viewPager = findViewById(R.id.viewPager);
         viewPager.setAdapter(adapter);

@@ -58,7 +58,13 @@ import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+
+import kr.co.bootpay.Bootpay;
+import kr.co.bootpay.BootpayAnalytics;
+import kr.co.bootpay.enums.Method;
+import kr.co.bootpay.enums.PG;
 
 public class NBasketActivity extends AppCompatActivity {
 
@@ -67,11 +73,16 @@ public class NBasketActivity extends AppCompatActivity {
     ListView listview;
     NBasketAdapter adapter;
     TextView mtotalP;
+    String username;
+    Integer foruniquenum=0, totalPrice=0;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_n_basket);
+
+        new UniqueNum().execute();
+        username = getSharedPreferences("user", MODE_PRIVATE).getString("username","");
 
         //네비게이션뷰 설정(클릭시 이동)
         navigationView = findViewById(R.id.navigation);
@@ -101,15 +112,14 @@ public class NBasketActivity extends AppCompatActivity {
         mtotalP = findViewById(R.id.purchase);
 
 
-
-        payment = findViewById(R.id.payment);
-        payment.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(NBasketActivity.this, ISetupAccount2Activity.class);
-                startActivity(intent);
-            }
-        });
+//        payment = findViewById(R.id.payment);
+//        payment.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent intent = new Intent(NBasketActivity.this, ISetupAccount2Activity.class);
+//                startActivity(intent);
+//            }
+//        });
 
         delivery = findViewById(R.id.delivery);
         delivery.setOnClickListener(new View.OnClickListener() {
@@ -196,19 +206,112 @@ public class NBasketActivity extends AppCompatActivity {
         purchase.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new Purchase().execute();
+                onClick_request();
+                //new Purchase().execute();
+
             }
         });
 
 
     }
 
+    class UniqueNum extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            Integer count = 0;
+            //get the saved token
+            SharedPreferences getval = getSharedPreferences("user", MODE_PRIVATE);
+            String token = getval.getString("access_token", "");
+            String email = getval.getString("username", "");
+            try{
+                URL url = new URL("http://ec2-13-125-246-38.ap-northeast-2.compute.amazonaws.com/users/"+email+"?access_token="+token);
+                HttpURLConnection urlConn = (HttpURLConnection) url.openConnection();
+                urlConn.setRequestMethod("GET");
+                urlConn.setDoInput(true);
+
+                if (urlConn.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                    InputStream stream = urlConn.getInputStream();
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
+                    StringBuilder buffer = new StringBuilder();
+                    String line = "";
+                    while ((line = reader.readLine()) != null) { buffer.append(line); }
+                    reader.close();
+                    JSONObject JsonResult = new JSONObject(buffer.toString());
+                    urlConn.disconnect();
+
+                    count += JsonResult.getJSONArray("tester_orders").length();
+                    count += JsonResult.getJSONArray("purchase_orders").length();
+                    count += JsonResult.getJSONArray("group_purchase_orders").length();
+
+                    foruniquenum = count;
+                }
+                urlConn.disconnect();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+    }
+
+
+    public void onClick_request() {
+
+        // 초기설정 - 해당 프로젝트(안드로이드)의 application id 값을 설정합니다. 결제와 통계를 위해 꼭 필요합니다.
+        BootpayAnalytics.init(this, "5c46b055b6d49c2299e2a9e6");
+
+        Log.i("###", "##########################2222#");
+        long mNow = System.currentTimeMillis();
+        Date mDate = new Date(mNow);
+
+        Log.i("###", "##########################3333#");
+        // 결제가 진행되기 바로 직전 호출되는 함수로, 주로 재고처리 등의 로직이 수행
+        // 결제완료시 호출, 아이템 지급 등 데이터 동기화 로직을 수행합니다
+        // 가상계좌 입금 계좌번호가 발급되면 호출되는 함수입니다.
+        // 결제 취소시 호출
+        // 에러가 났을때 호출되는 부분
+        //결제창이 닫힐때 실행되는 부분
+        Bootpay.init(getFragmentManager())
+                .setApplicationId("5c46b055b6d49c2299e2a9e6") // 해당 프로젝트(안드로이드)의 application id 값
+                .setPG(PG.KCP)
+                .setMethod(Method.CARD) // 결제수단
+                .setName("PIDA 상품 구매") // 결제할 상품명
+                .setOrderId(username+foruniquenum) // 결제 고유번호
+                .setPrice(totalPrice) // 결제할 금액
+//                .addItem(tit, quant, "부분환불예정 (공동구매)" , productPrice) // 주문정보에 담길 상품정보, 통계를 위해 사용
+                .onConfirm(message -> {
+//                    if (0 < stuck) Bootpay.confirm(message); // 재고가 있을 경우.
+//                    else Bootpay.removePaymentWindow(); // 재고가 없어 중간에 결제창을 닫고 싶을 경우
+                    Log.d("confirm", message);
+                })
+                .onDone(message -> {
+                    Toast.makeText(NBasketActivity.this, "결제가 완료되었습니다", Toast.LENGTH_LONG);
+                    Log.d("done", message);
+//                    new Purchase(group_url, quant).execute();
+                })
+                .onReady(message -> {
+                    Toast.makeText(NBasketActivity.this, "계좌번호가 발급되었습니다", Toast.LENGTH_LONG);
+                    Log.d("ready", message);
+                })
+                .onCancel(message -> {
+                    Toast.makeText(NBasketActivity.this, "결제가 취소되었습니다", Toast.LENGTH_LONG);
+                    Log.d("cancel", message);
+                })
+                .onError(message -> {
+                    Toast.makeText(NBasketActivity.this, "에러가 발생하여 결제가 취소되었습니다", Toast.LENGTH_LONG);
+                    Log.d("error", message);
+                })
+                .onClose(message -> Log.d("close", "close"))
+                .request();
+        Log.i("###", "###########################");
+    }
 
 
 
     void updatelist(){
 
-        Integer totalPrice=0;
+        totalPrice=0;
 
         SharedPreferences sharedPreferences = getSharedPreferences("order", MODE_PRIVATE);
         try {
@@ -287,7 +390,8 @@ public class NBasketActivity extends AppCompatActivity {
                 Log.i("###", "purchase at NBasketActivity===");
                 Log.i("###", String.valueOf(payOK));
                 Log.i("###", String.valueOf(delOK));
-                if (payOK && delOK){
+                //if (payOK && delOK){
+                if (delOK){
                     URL url = new URL("http://ec2-13-125-246-38.ap-northeast-2.compute.amazonaws.com/purchase-orders/?access_token="+token);
                     HttpURLConnection con = (HttpURLConnection) url.openConnection();
                     con.setRequestMethod("POST");

@@ -8,9 +8,12 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.gson.JsonArray;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -72,15 +75,11 @@ public class ISetupAccount1Activity extends AppCompatActivity {
         email = sharedPreferences.getString("username", "     ");
         pw = sharedPreferences.getString("password","     ");
         access_token = sharedPreferences.getString("access_token","     ");
+        json_url = "http://ec2-13-125-246-38.ap-northeast-2.compute.amazonaws.com/users/"
+                + email + "/?access_token=" + access_token;
 
+        new GETConnection().execute();
 
-        gender = sharedPreferences.getString("gender", "1");
-        age = sharedPreferences.getString("age","");
-        skintype = sharedPreferences.getString("skintype", "3");
-        concern = sharedPreferences.getString("concern","abc");
-        allergy = sharedPreferences.getString("allergy","ABD");
-
-        update();
 
 
         //클릭리스너가 show 함수에 모드 전달
@@ -146,7 +145,7 @@ public class ISetupAccount1Activity extends AppCompatActivity {
 
             //change pw
             case 1:
-
+                Toast.makeText(getApplicationContext(), "비밀번호는 변경할 수 없습니다.", Toast.LENGTH_SHORT).show();
                 break;
 
 
@@ -163,35 +162,21 @@ public class ISetupAccount1Activity extends AppCompatActivity {
                 AlertDialog.Builder builder2 = new AlertDialog.Builder(this);
                 builder2.setTitle("성별");
                 builder2.setSingleChoiceItems(GenderItems, defaultGenderItem,
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                SelectedGenderItems.clear();
-                                SelectedGenderItems.add(which);
-                            }
+                        (dialog, which) -> {
+                            SelectedGenderItems.clear();
+                            SelectedGenderItems.add(which);
                         });
-                builder2.setPositiveButton("확인",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                if (!SelectedGenderItems.isEmpty()) {
-                                    //변경한 성별이 선택된 경우 toast로 알림
-                                    int index = (int) SelectedGenderItems.get(0);
-                                    String msg = ListGenderItems.get(index);
-                                    gender = String.valueOf(index);
-                                    Toast.makeText(getApplicationContext(),"성별이 변경되었습니다." , Toast.LENGTH_LONG).show();
+                builder2.setPositiveButton("확인", (dialog, which) -> {
+                            if (!SelectedGenderItems.isEmpty()) {
+                                //변경한 성별이 선택된 경우 toast로 알림
+                                int index = (int) SelectedGenderItems.get(0);
+                                String msg = ListGenderItems.get(index);
+                                gender = String.valueOf(index);
 
-                                    //서버로 성별 변경 알림
-                                    Connection connection = new Connection();
-                                    connection.execute();
-                                    //페이지에 요소 업데이트
-                                    update();
-                                    //기기에 저장된 정보 변경
-                                    SharedPreferences.Editor editor = sharedPreferences.edit();
-                                    editor.putString("gender", gender);
-                                    editor.apply();
-                                }else {
-                                    Toast.makeText(getApplicationContext(),"성별을 선택하지 않아 값이 변경되지 않았습니다." , Toast.LENGTH_LONG).show();
-                                }
+                                Toast.makeText(getApplicationContext(),"성별이 변경되었습니다." , Toast.LENGTH_LONG).show();
+                                new Connection().execute();
+                            }else {
+                                Toast.makeText(getApplicationContext(),"성별을 선택하지 않아 값이 변경되지 않았습니다." , Toast.LENGTH_LONG).show();
                             }
                         });
                 builder2.setNegativeButton("취소",
@@ -219,12 +204,9 @@ public class ISetupAccount1Activity extends AppCompatActivity {
                 AlertDialog.Builder builder3 = new AlertDialog.Builder(this);
                 builder3.setTitle("나이");
                 builder3.setSingleChoiceItems(AgeItems, defaultAgeItem,
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                SelectedAgeItems.clear();
-                                SelectedAgeItems.add(which);
-                            }
+                        (dialog, which) -> {
+                            SelectedAgeItems.clear();
+                            SelectedAgeItems.add(which);
                         });
                 builder3.setPositiveButton("확인",
                         new DialogInterface.OnClickListener() {
@@ -235,16 +217,8 @@ public class ISetupAccount1Activity extends AppCompatActivity {
                                     String msg = ListAgeItems.get(index);
                                     age = String.valueOf(index);
                                     Toast.makeText(getApplicationContext(),"나이가 변경되었습니다." , Toast.LENGTH_LONG).show();
-
                                     //서버로 변경 알림
-                                    Connection connection = new Connection();
-                                    connection.execute();
-                                    //페이지에 요소 업데이트
-                                    update();
-                                    //기기에 저장된 정보 변경
-                                    SharedPreferences.Editor editor = sharedPreferences.edit();
-                                    editor.putString("age", age);
-                                    editor.apply();
+                                    new Connection().execute();
                                 }else {
                                     Toast.makeText(getApplicationContext(),"나이를 선택하지 않아 값이 변경되지 않았습니다." , Toast.LENGTH_LONG).show();
                                 }
@@ -257,7 +231,6 @@ public class ISetupAccount1Activity extends AppCompatActivity {
                         });
                 builder3.show();
                 break;
-
 
             //change skintype
             case 4:
@@ -274,12 +247,9 @@ public class ISetupAccount1Activity extends AppCompatActivity {
                 AlertDialog.Builder builder4 = new AlertDialog.Builder(this);
                 builder4.setTitle("피부 타입");
                 builder4.setSingleChoiceItems(SkinItems, defaultSkinItem,
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                SelectedSkinItems.clear();
-                                SelectedSkinItems.add(which);
-                            }
+                        (dialog, which) -> {
+                            SelectedSkinItems.clear();
+                            SelectedSkinItems.add(which);
                         });
                 builder4.setPositiveButton("확인",
                         (dialog, which) -> {
@@ -291,14 +261,8 @@ public class ISetupAccount1Activity extends AppCompatActivity {
                                 Toast.makeText(getApplicationContext(),"피부 타입이 변경되었습니다." , Toast.LENGTH_LONG).show();
 
                                 //서버로 변경 알림
-                                Connection connection = new Connection();
-                                connection.execute();
-                                //페이지에 요소 업데이트
-                                update();
-                                //기기에 저장된 정보 변경
-                                SharedPreferences.Editor editor = sharedPreferences.edit();
-                                editor.putString("skintype", skintype);
-                                editor.apply();
+                                new Connection().execute();
+
                             }else {
                                 Toast.makeText(getApplicationContext(),"피부 타입을 선택하지 않아 값이 변경되지 않았습니다." , Toast.LENGTH_LONG).show();
                             }
@@ -355,14 +319,7 @@ public class ISetupAccount1Activity extends AppCompatActivity {
                                 Toast.makeText(getApplicationContext(),"피부 고민이 변경되었습니다." , Toast.LENGTH_LONG).show();
 
                                 //서버로 변경 알림
-                                Connection connection = new Connection();
-                                connection.execute();
-                                //페이지에 요소 업데이트
-                                update();
-                                //기기에 저장된 정보 변경
-                                SharedPreferences.Editor editor = sharedPreferences.edit();
-                                editor.putString("concern", concern);
-                                editor.apply();
+                                new Connection().execute();
                             }
                         });
                 builder5.setNegativeButton("취소",
@@ -406,25 +363,22 @@ public class ISetupAccount1Activity extends AppCompatActivity {
                 builder6.setPositiveButton("Ok",
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
-                                String msg="";
+                                StringBuilder msg=new StringBuilder();
                                 for (int i = 0; i < SelectedItems.size(); i++) {
                                     int index = (int) SelectedItems.get(i);
-
-                                    msg=msg+"\n"+(i+1)+" : " +ListItems.get(index);
+                                    if (index == 0) {msg.append("A");}
+                                    else if (index == 1) {msg.append("B");}
+                                    else if (index == 2) {msg.append("C");}
+                                    else if (index == 3) {msg.append("D");}
+                                    else if (index == 4) {msg.append("E");}
+                                    else if (index == 5) {msg.append("F");}
+                                    else if (index == 6) {msg.append("G");}
                                 }
-                                Toast.makeText(getApplicationContext(),
-                                        "Total "+ SelectedItems.size() +" Items Selected.\n"+ msg , Toast.LENGTH_LONG)
-                                        .show();
+                                allergy = msg.toString();
+                                Toast.makeText(getApplicationContext(),"알러지가 변경되었습니다." , Toast.LENGTH_LONG).show();
 
-                                //서버로 변경 알림
-                                Connection connection = new Connection();
-                                connection.execute();
-                                //페이지에 요소 업데이트
-                                update();
-                                //기기에 저장된 정보 변경
-                                SharedPreferences.Editor editor = sharedPreferences.edit();
-                                editor.putString("allergy", allergy);
-                                editor.apply();
+                                new Connection().execute();
+
                             }
                         });
                 builder6.setNegativeButton("Cancel",
@@ -442,8 +396,7 @@ public class ISetupAccount1Activity extends AppCompatActivity {
     ///아래 6개의 함수는 저장된 데이터에서 띄워야할 텍스트로 바꾸어주는 함수들(성별, 비밀번호, 나이, 피부타입, 피부고민, 알러지)
     @Nullable
     private String getAgeString(String data) {
-        Integer dataNum = Integer.getInteger(data);
-        if (dataNum==null){dataNum=2;}
+        Integer dataNum = Integer.valueOf(data);
         switch (dataNum){
             case 0 : return "19세 이하";
             case 1 : return "20세 ~ 26세";
@@ -504,8 +457,7 @@ public class ISetupAccount1Activity extends AppCompatActivity {
     }
 
     private String getSkintypeString(String data){
-        Integer dataNum = Integer.getInteger(data);
-        if (dataNum==null){dataNum=1;}
+        Integer dataNum = Integer.valueOf(data);
         switch (dataNum){
             case 0 : return "건성";
             case 1 : return "중성";
@@ -529,12 +481,21 @@ public class ISetupAccount1Activity extends AppCompatActivity {
         protected Boolean doInBackground(String... params) {
             try{
 
+                //make json
                 JSONObject jsonObject = new JSONObject();
-                jsonObject.accumulate(params[0], params[1]);
+                jsonObject.put("gender", Integer.valueOf(gender));
+                jsonObject.put("age", Integer.valueOf(age));
+                jsonObject.put("skin_type", Integer.valueOf(skintype));
+                char[] temp = concern.toCharArray();
+                JSONArray tempJ = new JSONArray(temp);
+                jsonObject.put("skin_concerns", tempJ);
+                temp = allergy.toCharArray();
+                tempJ = new JSONArray(temp);
+                jsonObject.put("allergies", tempJ);
 
                 URL url = new URL(json_url);
                 HttpURLConnection con = (HttpURLConnection) url.openConnection();
-                con.setRequestMethod("POST");
+                con.setRequestMethod("PATCH");
                 con.setRequestProperty("Content-Type", "application/json");
                 con.setDoOutput(true);
                 con.setDoInput(true);
@@ -557,6 +518,16 @@ public class ISetupAccount1Activity extends AppCompatActivity {
                 con.disconnect();
                 reader.close();
                 JSONObject Jres = new JSONObject(buffer.toString());
+                gender = String.valueOf(Jres.getInt("gender"));
+                age = String.valueOf(Jres.getInt("age"));
+                skintype = String.valueOf(Jres.getInt("skin_type"));
+                concern = "";
+                JSONArray concernArray = Jres.getJSONArray("skin_concerns");
+                for (int i = 0; i<concernArray.length(); i++) concern += concernArray.getString(i);
+                allergy = "";
+                JSONArray allergyArray = Jres.getJSONArray("allergies");
+                for (int i = 0; i<allergyArray.length(); i++) allergy += allergyArray.getString(i).toUpperCase();
+
                 return Jres.getBoolean("result");
 
             } catch (Exception e) {
@@ -568,6 +539,79 @@ public class ISetupAccount1Activity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Boolean result) {
 
+            //기기에 저장된 정보 변경
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putString("gender", gender);
+            editor.putString("age", age);
+            editor.putString("skintype", skintype);
+            editor.putString("concern", concern);
+            editor.putString("allergy", allergy);
+            editor.apply();
+
+            update();
+        }
+    }
+
+    //서버에 변경된 데이터 send
+    private class GETConnection extends AsyncTask<String, Void, Boolean> {
+        @Override
+        protected void onPreExecute() { }
+
+
+        @Override
+        protected Boolean doInBackground(String... params) {
+            try{
+                Log.i("###", "!!!!!!!!!!!!");
+                URL url = new URL(json_url);
+                HttpURLConnection con = (HttpURLConnection) url.openConnection();
+                con.setRequestMethod("GET");
+                con.setRequestProperty("Content-Type", "application/json");
+                //con.setDoOutput(true);
+                con.setDoInput(true);
+                con.connect();
+
+                Log.i("###", "!!!!!!!!!!!!");
+                InputStream stream = con.getInputStream();
+                BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
+                StringBuffer buffer = new StringBuffer();
+                String line = "";
+                while ((line = reader.readLine()) != null) {
+                    buffer.append(line);
+                }
+
+                Log.i("###", "!!!!!!!!!!!!");
+                con.disconnect();
+                reader.close();
+                JSONObject Jres = new JSONObject(buffer.toString());
+
+
+                Log.i("###", "!!!!!!!!!!!!");
+                gender = String.valueOf(Jres.getInt("gender"));
+                age = String.valueOf(Jres.getInt("age"));
+                skintype = String.valueOf(Jres.getInt("skin_type"));
+                Log.i("###", "!!!!!!!!!!!!");
+                concern = "";
+                JSONArray concernArray = Jres.getJSONArray("skin_concerns");
+                for (int i = 0; i<concernArray.length(); i++) concern += concernArray.getString(i);
+                Log.i("###", "!!!!!!!!!!!!");
+                allergy = "";
+                JSONArray allergyArray = Jres.getJSONArray("allergies");
+                for (int i = 0; i<allergyArray.length(); i++) allergy += allergyArray.getString(i).toUpperCase();
+
+
+
+
+                return Jres.getBoolean("result");
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+            update();
         }
     }
 

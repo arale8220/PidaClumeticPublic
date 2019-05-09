@@ -74,35 +74,6 @@
 
 
         <Button
-            android:id="@+id/payment"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:background="@color/white"
-            android:elevation="10dp"
-            android:gravity="center_vertical"
-            android:paddingStart="14dp"
-            android:paddingLeft="14dp"
-            android:text="결제정보"
-            android:textColor="@color/drk_gray"
-            android:textSize="16sp"
-            app:fontFamily="@font/notosans"
-            app:layout_constraintTop_toBottomOf="@+id/cream" />
-
-        <ImageView
-            android:id="@+id/imageView4"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_marginEnd="10dp"
-            android:layout_marginRight="10dp"
-            android:elevation="11dp"
-            android:tint="@color/drk_gray"
-            app:layout_constraintBottom_toBottomOf="@+id/payment"
-            app:layout_constraintRight_toRightOf="@+id/payment"
-            app:layout_constraintTop_toTopOf="@+id/payment"
-            app:srcCompat="@drawable/ic_rightarrow"
-            tools:ignore="VectorDrawableCompat" />
-
-        <Button
             android:id="@+id/delivery"
             android:layout_width="match_parent"
             android:layout_height="48dp"
@@ -115,7 +86,7 @@
             android:textColor="@color/drk_gray"
             android:textSize="16sp"
             app:fontFamily="@font/notosans"
-            app:layout_constraintTop_toBottomOf="@+id/payment" />
+            app:layout_constraintBottom_toBottomOf="parent"/>
 
         <ImageView
             android:id="@+id/imageView5"
