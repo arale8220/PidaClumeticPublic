@@ -22,7 +22,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
-        android:text="ver 0.0.0"
+        android:text="ver 0.0.1"
         android:textColor="#de000000"
         android:textSize="24sp"
         app:fontFamily="@font/notosans"

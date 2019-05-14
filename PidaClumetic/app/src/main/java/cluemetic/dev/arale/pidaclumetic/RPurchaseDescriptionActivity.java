@@ -40,7 +40,7 @@ public class RPurchaseDescriptionActivity extends AppCompatActivity {
     ImageButton mImgBtn;
     ImageView mImgUrl;
     ListView listview;
-    Button delivery, payment;
+    Button delivery;
     Intent intent;
     Integer type, status;
     String imgUrl, purchaseUrl, time, price;
@@ -204,15 +204,15 @@ public class RPurchaseDescriptionActivity extends AppCompatActivity {
             inf1.setText(time);
             inf2.setText(price);
 
-            payment = findViewById(R.id.payment);
-            payment.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent = new Intent(RPurchaseDescriptionActivity.this, ISetupAccount2ReadOnlyActivity.class);
-                    intent.putExtra("url", pay);
-                    startActivity(intent);
-                }
-            });
+//            payment = findViewById(R.id.payment);
+//            payment.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    Intent intent = new Intent(RPurchaseDescriptionActivity.this, ISetupAccount2ReadOnlyActivity.class);
+//                    intent.putExtra("url", pay);
+//                    startActivity(intent);
+//                }
+//            });
 
             delivery = findViewById(R.id.delivery);
             delivery.setOnClickListener(new View.OnClickListener() {
@@ -239,10 +239,8 @@ public class RPurchaseDescriptionActivity extends AppCompatActivity {
         protected Boolean doInBackground(Integer... params) {
             try {
 
-                Log.i("###", "~~~~~~~~~~");
                 for (int j = 0;j<urls.size(); j++){
 
-                    Log.i("###", "~~~~~~~~~~00000");
                     URL url = new URL(urls.get(j));
                     HttpURLConnection con = (HttpURLConnection) url.openConnection();
                     con.setRequestMethod("GET");
@@ -262,7 +260,6 @@ public class RPurchaseDescriptionActivity extends AppCompatActivity {
                     JSONObject Jres = new JSONObject(buffer.toString());
 
                     if (type == 0){
-                        Log.i("###", "##################");
                         adapter.addItem(type,
                                 Jres.getString("image"),
                                 Jres.getString("name"),

@@ -160,31 +160,6 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1.5"
-                        android:text="대표번호 :"
-                        android:textColor="@color/lgt_gray"
-                        android:textSize="14sp"
-                        android:textStyle="bold"
-                        app:fontFamily="@font/notosans" />
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="3"
-                        android:text="010-2129-7481"
-                        android:textColor="@color/drk_gray"
-                        android:textSize="14sp" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="horizontal"
-                    android:weightSum="4.5">
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1.5"
                         android:text="주소 :"
                         android:textColor="@color/lgt_gray"
                         android:textSize="14sp"
