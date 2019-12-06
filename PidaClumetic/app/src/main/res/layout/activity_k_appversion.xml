@@ -13,8 +13,14 @@
         android:minHeight="?attr/actionBarSize"
         android:theme="?attr/actionBarTheme"
         >
-
     </android.support.v7.widget.Toolbar>
+
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/lgt_gray"
+        app:layout_constraintTop_toBottomOf="@id/toolbar"/>
 
     <TextView
         android:id="@+id/account"
@@ -22,7 +28,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
-        android:text="ver 0.0.1"
+        android:text="ver 1.0.4"
         android:textColor="#de000000"
         android:textSize="24sp"
         app:fontFamily="@font/notosans"

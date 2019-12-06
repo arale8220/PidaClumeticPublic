@@ -113,42 +113,41 @@ public class JGroupProductActivity extends AppCompatActivity {
         Bootpay.init(getFragmentManager())
                 .setApplicationId("5c46b055b6d49c2299e2a9e6") // 해당 프로젝트(안드로이드)의 application id 값
                 .setPG(PG.KCP)
+
                 .setMethod(Method.CARD) // 결제수단
                 .setName("공동구매-"+tit) // 결제할 상품명
                 .setOrderId(username+foruniquenum) // 결제 고유번호
+//                .setPrice(100) // 결제할 금액
                 .setPrice(productPrice * quant) // 결제할 금액
                 .addItem(tit, quant, "부분환불예정 (공동구매)" , productPrice) // 주문정보에 담길 상품정보, 통계를 위해 사용
                 .onConfirm(message -> {
 //                    if (0 < stuck) Bootpay.confirm(message); // 재고가 있을 경우.
 //                    else Bootpay.removePaymentWindow(); // 재고가 없어 중간에 결제창을 닫고 싶을 경우
-                    Log.d("confirm", message);
+                    Log.i("### confirm", message);
                 })
                 .onDone(message -> {
                     Toast.makeText(JGroupProductActivity.this, "결제가 완료되었습니다", Toast.LENGTH_LONG);
-                    Log.d("done", message);
+                    Log.i("### done", message);
                     new Purchase(group_url, quant).execute();
-                })
+                }
+
+
+                )
                 .onReady(message -> {
                     Toast.makeText(JGroupProductActivity.this, "계좌번호가 발급되었습니다", Toast.LENGTH_LONG);
-                    Log.d("ready", message);
+                    Log.i("### ready", message);
                 })
                 .onCancel(message -> {
                     Toast.makeText(JGroupProductActivity.this, "결제가 취소되었습니다", Toast.LENGTH_LONG);
-                    Log.d("cancel", message);
+                    Log.i("### cancel", message);
                 })
                 .onError(message -> {
                     Toast.makeText(JGroupProductActivity.this, "에러가 발생하여 결제가 취소되었습니다", Toast.LENGTH_LONG);
-                    Log.d("error", message);
+                    Log.i("### error", message);
                 })
                 .onClose(message -> Log.d("close", "close"))
                 .request();
         Log.i("###", "###########################");
-
-
-
-
-
-
 
     }
 

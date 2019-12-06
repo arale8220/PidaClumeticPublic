@@ -170,7 +170,7 @@ public class ALoadingActivity extends AppCompatActivity {
                 con.setDoInput(true);
                 con.connect();
 
-                Log.i("###", "refresh token at Loading");
+                //Log.i("###", "refresh token at Loading");
                 InputStream stream = con.getInputStream();
                 BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
                 StringBuffer buffer = new StringBuffer();
@@ -179,7 +179,7 @@ public class ALoadingActivity extends AppCompatActivity {
                     buffer.append(line);
                 }
 
-                Log.i("###", "refresh token at Loading");
+                //Log.i("###", "refresh token at Loading");
                 con.disconnect();
                 reader.close();
                 JSONObject Jres = new JSONObject(buffer.toString());
@@ -196,7 +196,7 @@ public class ALoadingActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(Boolean result) {
-            Log.i("###", "refresh token finished at Loading");
+            //Log.i("###", "refresh token finished at Loading");
             new getUserData().execute();
             SharedPreferences getvall = getSharedPreferences("user", MODE_PRIVATE);
             SharedPreferences.Editor editor = getvall.edit();

@@ -16,6 +16,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Design.Light.NoActionBar"
         android:networkSecurityConfig="@xml/network_security_config">
+
         <activity android:name=".ALoadingActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -33,23 +34,23 @@
                 android:resource="@xml/provider_paths"/>
         </provider>
 
-        <activity android:name=".BLoginActivity" android:launchMode="singleTop" />
-        <activity android:name=".DTutorialActivity" android:launchMode="singleTop" />
+        <activity android:name=".BLoginActivity" android:launchMode="singleInstance" android:excludeFromRecents="true" />
+        <activity android:name=".DTutorialActivity" android:launchMode="singleInstance" android:excludeFromRecents="true" />
         <activity android:name=".CSignupActivity" />
-        <activity android:name=".ECategoryActivity" android:launchMode="singleTop" />
+        <activity android:name=".ECategoryActivity" android:launchMode="singleInstance" android:excludeFromRecents="true" />
         <activity android:name=".FSubCategoryActivity" />
         <activity android:name=".HProductActivity" />
         <activity android:name=".ISetupAccount1Activity" />
-        <activity android:name=".ISetupActivity" android:launchMode="singleTop" />
+        <activity android:name=".ISetupActivity" android:launchMode="singleInstance" android:excludeFromRecents="true" />
         <activity android:name=".ISetupAccount2Activity" />
         <activity android:name=".ISetupAccount3Activity" />
         <activity android:name=".KAppVersionActivity" />
         <activity android:name=".LListActivity" />
-        <activity android:name=".JGroupActivity" />
+        <activity android:name=".JGroupActivity" android:launchMode="singleInstance" android:excludeFromRecents="true"/>
         <activity android:name=".JGroupProductActivity" />
-        <activity android:name=".MTesterActivity" android:launchMode="singleTop" />
-        <activity android:name=".NBasketActivity" android:launchMode="singleTop" />
-        <activity android:name=".OPidaActivity" android:launchMode="singleTop"  />
+        <activity android:name=".MTesterActivity" />
+        <activity android:name=".NBasketActivity" android:launchMode="singleInstance" android:excludeFromRecents="true" />
+        <activity android:name=".OPidaActivity" android:launchMode="singleInstance" android:excludeFromRecents="true"  />
         <activity android:name=".QPurchaseDoneActivity" />
         <activity android:name=".ISetupNoticeActivity" />
         <activity android:name=".RPurchaseDescriptionActivity" />

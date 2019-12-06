@@ -26,16 +26,6 @@
             app:fontFamily="@font/notosans" />
 
         <ImageButton
-            android:id="@+id/btnCamera"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:background="#00000000"
-            android:paddingStart="0dp"
-            android:paddingEnd="20dp"
-            app:srcCompat="@android:drawable/ic_menu_camera" />
-
-        <ImageButton
             android:id="@+id/btnSearch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

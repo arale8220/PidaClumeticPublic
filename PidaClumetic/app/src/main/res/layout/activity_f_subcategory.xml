@@ -25,15 +25,6 @@
             android:paddingStart="20dp"
             app:fontFamily="@font/notosans"/>
 
-        <ImageButton
-            android:id="@+id/btnCamera"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:paddingEnd="20dp"
-            android:paddingStart="0dp"
-            android:background="#00000000"
-            app:srcCompat="@android:drawable/ic_menu_camera" />
 
         <ImageButton
             android:id="@+id/btnSearch"
@@ -50,7 +41,7 @@
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="2dp"
+        android:layout_height="1dp"
         android:background="@color/lgt_gray"
         app:layout_constraintTop_toBottomOf="@id/toolbar"/>
 
