@@ -17,8 +17,18 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 public class OPidaProductAdapter extends PagerAdapter {
     List<OPidaProduct> products;
@@ -131,6 +141,9 @@ public class OPidaProductAdapter extends PagerAdapter {
             if (status==0) return null;
             String urldisplay = urls[0];
             Bitmap mIcon11 = null;
+
+
+
             try {
                 InputStream in = new java.net.URL(urldisplay).openStream();
                 mIcon11 = BitmapFactory.decodeStream(in);

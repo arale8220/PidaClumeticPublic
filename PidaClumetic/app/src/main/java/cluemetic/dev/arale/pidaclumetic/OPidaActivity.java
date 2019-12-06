@@ -118,8 +118,6 @@ public class OPidaActivity extends AppCompatActivity {
 
     }
 
-
-
     //각 url마다 정보를 받아 PidaProduct 생성
     private class GetPidaData extends AsyncTask<String[], Void, Boolean> {
         @Override
@@ -177,7 +175,7 @@ public class OPidaActivity extends AppCompatActivity {
                         currOrder.put("type", 0);
                         currOrder.put("status", temp.getInt("status"));
                         currOrder.put("order_time", temp.getString("order_time"));
-                        currOrder.put("imgUrl", "it is tester_order");
+                        currOrder.put("imgUrl", "");
                         currOrder.put("url", temp.getString("url"));
                         currOrder.put("num", "");
                         all_orders.put(currOrder);
@@ -191,7 +189,7 @@ public class OPidaActivity extends AppCompatActivity {
                         currOrder.put("type", 1);
                         currOrder.put("order_time", temp.getString("order_time"));
                         Log.i("###", "get PidaData at PidaActivity--make purchase order JSONArray111");
-                        currOrder.put("imgUrl", temp.getJSONArray("items").getJSONObject(0).getJSONObject("product").getString("image"));
+                        currOrder.put("imgUrl", temp.getJSONArray("items").getJSONObject(0).getString("product"));
                         Log.i("###", "get PidaData at PidaActivity--make purchase order JSONArray222");
                         currOrder.put("status", temp.getInt("status"));
                         Log.i("###", "get PidaData at PidaActivity--make purchase order JSONArray333");
@@ -269,10 +267,61 @@ public class OPidaActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(Boolean result) {
-            showList();
+            getimgurl();
         }
     }
 
+    public class DownloadImageUrl extends AsyncTask<Integer, Void, Integer>{
+
+        @Override
+        protected Integer doInBackground(Integer... nums) {
+            URL url;
+            try {
+                url = new URL(products.get(nums[0]).imgUri);
+                Log.i("###", "Download image url from" + url);
+                HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+                urlConnection.setDoInput(true);
+                urlConnection.connect();
+                InputStream in = urlConnection.getInputStream();
+
+
+                BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+                StringBuilder buffer = new StringBuilder();
+                String line = "";
+                while ((line = reader.readLine()) != null) {
+                    buffer.append(line);
+                }
+                reader.close();
+                JSONObject JsonResult = new JSONObject(buffer.toString());
+                in.close();
+                products.get(nums[0]).imgUri = JsonResult.getString("image");
+            }
+            catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
+            catch (IOException e) {
+                e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Integer i) {
+            showList();
+        }
+
+
+    }
+
+    void getimgurl(){
+        for (int i=0; i<products.size(); i++){
+            if (products.get(i).type == 1){
+                new DownloadImageUrl().execute(i);
+            }
+        }
+    }
 
     //products를 받아 화면에 리스트 띄워주기.
     //현재 사진을 로드하는 데에 시간이 조금 걸림.
